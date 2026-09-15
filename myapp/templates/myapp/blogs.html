@@ -1,0 +1,50 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block title %}Activities Blog - TOP5SAI{% endblock %}
+
+{% block content %}
+<!-- Page Header Start -->
+   <div class="blog-header" style="background: #175aa3ff; color: #fff; padding: 40px 0; text-align: center;">
+        <h1>TOP5SAI Activities</h1>
+        <p>See the events, projects, and moments we have shared.</p>
+    </div>
+<!-- Page Header End -->
+
+ <div class="container-fluid py-5" style="background: linear-gradient(rgba(8, 30, 58, 0.62), rgba(8, 30, 58, 0.72)), url('{% static 'img/r20.webp' %}') center center / cover fixed;">
+     <div class="container mt-0 mb-0" style="background: transparent;">
+        {% if blog_posts %}
+        <div class="row g-4">
+            {% for post in blog_posts %}
+            <div class="col-lg-4 col-md-6">
+                <article class="blog-section h-100" style="background: #fff; color: #000; border: 1px solid rgba(244, 193, 93, 0.55); border-radius: 12px; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3); overflow: hidden;">
+                    {% if post.youtube_embed_url %}
+                    <div style="aspect-ratio: 16 / 9;">
+                        <iframe src="{{ post.youtube_embed_url }}" title="TOP5SAI activity video" class="w-100 h-100" style="border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    {% elif post.photo %}
+                    <img src="{{ post.photo.url }}" alt="TOP5SAI activity" class="img-fluid w-100" style="height: 240px; object-fit: cover;">
+                    {% endif %}
+                    <div style="padding: 24px; background: #fff; color: #000;">
+                        {% if post.event_date or post.venue %}
+                        <div class="d-flex flex-wrap gap-3 mb-3 text-muted" style="font-size: 0.9rem;">
+                            {% if post.event_date %}<span><i class="fa fa-calendar-alt text-primary me-2"></i>{{ post.event_date|date:"F j, Y" }}</span>{% endif %}
+                            {% if post.venue %}<span><i class="fa fa-map-marker-alt text-primary me-2"></i>{{ post.venue }}</span>{% endif %}
+                        </div>
+                        {% endif %}
+                        <p class="mb-0" style="text-align: justify;">{{ post.description|linebreaksbr }}</p>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="blog-section text-center" style="background: #fff; color: #000; border: 1px solid rgba(244, 193, 93, 0.55); border-radius: 12px; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3); padding: 32px; margin-bottom: 32px;">
+            <h2 class="blog-title" style="color: #000; font-weight: 700;">Activities coming soon</h2>
+            <p class="mb-0" style="color: #000;">New TOP5SAI activities will appear here as they are published.</p>
+        </div>
+        {% endif %}
+    </div>
+ </div>
+<!-- Blog Content End -->
+{% endblock %}

@@ -1,0 +1,342 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block title %}Voting Campaigns - TOP5SAI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .voting-hero {
+        position: relative;
+        background: linear-gradient(135deg, #0b3d91 0%, #2563eb 45%, #7c3aed 100%);
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+        margin-bottom: 55px;
+        overflow: hidden;
+        box-shadow: 0 18px 60px rgba(15, 77, 176, 0.25);
+    }
+    
+    .voting-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 35%),
+                    radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.08), transparent 20%);
+        opacity: 0.95;
+        pointer-events: none;
+    }
+
+    .voting-hero h1 {
+        position: relative;
+        font-size: 3.8rem;
+        font-weight: 900;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.22);
+        line-height: 1.02;
+    }
+    
+    .voting-hero p {
+        position: relative;
+        font-size: 1.2rem;
+        max-width: 720px;
+        margin: 0 auto 30px;
+        line-height: 1.7;
+        letter-spacing: 0.02em;
+    }
+    
+    .campaigns-container {
+        padding: 50px 0;
+    }
+    
+    .campaign-card {
+        position: relative;
+        background: linear-gradient(180deg, #ffffff 0%, #f4f8ff 100%);
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 12px 30px rgba(15, 77, 176, 0.08);
+        transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(13, 110, 253, 0.12);
+    }
+    
+    .campaign-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(90deg, #0084ff 0%, #0d6efd 50%, #7c3aed 100%);
+    }
+
+    .campaign-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 18px 45px rgba(15, 77, 176, 0.18);
+        border-color: rgba(13, 110, 253, 0.22);
+    }
+    
+    .campaign-banner {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        background: linear-gradient(135deg, #0b3d91 0%, #2563eb 45%, #7c3aed 100%);
+    }
+    
+    .campaign-content {
+        padding: 25px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .campaign-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 12px;
+        line-height: 1.4;
+    }
+    
+    .campaign-description {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        flex-grow: 1;
+    }
+    
+    .campaign-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .meta-item {
+        font-size: 0.85rem;
+        color: #666;
+    }
+    
+    .meta-item strong {
+        color: #0084ff;
+        font-weight: 700;
+    }
+    
+    .days-remaining {
+        background: #fff3cd;
+        color: #856404;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    
+    .days-remaining.expired {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .campaign-status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-active {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-draft {
+        background: #e7e7e7;
+        color: #555;
+    }
+    
+    .status-closed {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .vote-stats {
+        display: flex;
+        gap: 15px;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+    
+    .stat {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .stat i {
+        color: #0084ff;
+        font-size: 1.1rem;
+    }
+    
+    .vote-btn {
+        background: linear-gradient(135deg, #0b3d91 0%, #2563eb 45%, #7c3aed 100%);
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+        box-shadow: 0 10px 30px rgba(15, 77, 176, 0.28);
+    }
+    
+    .vote-btn:hover {
+        background: linear-gradient(135deg, #0d6efd 0%, #1d4ed8 50%, #6d28d9 100%);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 14px 36px rgba(15, 77, 176, 0.45);
+    }
+    
+    .vote-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .no-campaigns {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    
+    .no-campaigns i {
+        font-size: 4rem;
+        color: #ccc;
+        margin-bottom: 20px;
+    }
+    
+    .no-campaigns h2 {
+        color: #666;
+        margin-bottom: 10px;
+    }
+    
+    .no-campaigns p {
+        color: #999;
+        font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+        .voting-hero h1 {
+            font-size: 2.5rem;
+        }
+        
+        .voting-hero p {
+            font-size: 1rem;
+        }
+        
+        .campaign-title {
+            font-size: 1.2rem;
+        }
+        
+        .campaign-banner {
+            height: 200px;
+        }
+        
+        .campaign-content {
+            padding: 20px;
+        }
+        
+        .campaigns-container {
+            padding: 30px 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Voting Hero Section -->
+<div class="voting-hero">
+    <div class="container">
+        <h1>Cast Your Vote</h1>
+        <p>Participate in our exciting voting campaigns and make your voice heard. Browse our active campaigns below and vote for your favorites.</p>
+    </div>
+</div>
+
+<!-- Campaigns List Section -->
+<div class="container campaigns-container">
+    {% if campaigns %}
+        <div class="row g-4">
+            {% for campaign in campaigns %}
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="campaign-card">
+                        {% if campaign.banner %}
+                            <img src="{{ campaign.banner.url }}" alt="{{ campaign.title }}" class="campaign-banner">
+                        {% else %}
+                            <div class="campaign-banner" style="display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-image" style="font-size: 3rem; color: rgba(255,255,255,0.5);"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="campaign-content">
+                            <div style="margin-bottom: 10px;">
+                                <span class="campaign-status {% if campaign.is_active %}status-active{% elif campaign.status == 'draft' %}status-draft{% else %}status-closed{% endif %}">
+                                    {{ campaign.get_status_display }}
+                                </span>
+                            </div>
+                            
+                            <h3 class="campaign-title">{{ campaign.title }}</h3>
+                            <p class="campaign-description">
+                                {{ campaign.short_description|default:campaign.description|truncatewords:20 }}
+                            </p>
+                            
+                            <div class="vote-stats">
+                                <div class="stat">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span><strong>{{ campaign.total_votes }}</strong> votes</span>
+                                </div>
+                            </div>
+                            
+                            <div class="campaign-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    {{ campaign.start_date|date:"M d, Y" }}
+                                </div>
+                                {% if campaign.is_active %}
+                                    <span class="days-remaining">
+                                        <i class="fas fa-hourglass-end"></i>
+                                        {{ campaign.days_remaining }} days left
+                                    </span>
+                                {% elif campaign.end_date < now %}
+                                    <span class="days-remaining expired">Ended</span>
+                                {% endif %}
+                            </div>
+                            
+                            <a href="{% url 'voting:campaign_detail' campaign.pk %}" class="vote-btn">
+                                <i class="fas fa-vote-yea"></i> Vote Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-campaigns">
+            <i class="fas fa-inbox"></i>
+            <h2>No Active Campaigns</h2>
+            <p>There are currently no active voting campaigns. Please check back soon!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

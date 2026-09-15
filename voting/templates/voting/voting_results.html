@@ -1,0 +1,685 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block title %}Voting Results - {{ campaign.title }} - TOP5SAI{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --page-background: #070b18;
+        --surface: rgba(15, 23, 42, 0.96);
+        --surface-soft: rgba(15, 23, 42, 0.78);
+        --card: rgba(255, 255, 255, 0.08);
+        --border: rgba(148, 163, 184, 0.18);
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
+        --accent: #8b5cf6;
+        --accent-alt: #22d3ee;
+        --accent-soft: rgba(124, 58, 237, 0.18);
+    }
+
+    body {
+        background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.14), transparent 22%),
+                    radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.16), transparent 24%),
+                    linear-gradient(180deg, #090f1d 0%, #0e1726 100%);
+        color: var(--text-primary);
+    }
+
+    .results-page {
+        padding: 42px 0 60px;
+    }
+
+    .results-header {
+        background: linear-gradient(135deg, #111827 0%, #1e293b 50%, #4338ca 100%);
+        color: var(--text-primary);
+        padding: 36px 32px;
+        margin-bottom: 36px;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 28px 80px rgba(15, 23, 42, 0.34);
+    }
+
+    .results-header-content {
+        display: grid;
+        grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.4fr);
+        gap: 32px;
+        align-items: center;
+    }
+
+    .results-header-image {
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+        min-height: 280px;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .results-header-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .results-header-image .placeholder-box {
+        display: grid;
+        place-items: center;
+        min-height: 280px;
+        border-radius: 24px;
+        padding: 32px;
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    .results-header-image .placeholder-box i {
+        font-size: 3.5rem;
+        opacity: 0.72;
+        margin-bottom: 16px;
+    }
+
+    .results-header-info h1 {
+        font-size: clamp(2rem, 2.8vw, 3.3rem);
+        line-height: 1.02;
+        margin-bottom: 16px;
+        font-weight: 900;
+    }
+
+    .results-header-info p {
+        font-size: 1rem;
+        line-height: 1.9;
+        margin-bottom: 26px;
+        color: rgba(248, 250, 252, 0.82);
+        max-width: 760px;
+    }
+
+    .results-meta-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 18px;
+    }
+
+    .meta-box {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(14px);
+        padding: 20px 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 24px 45px rgba(15, 23, 42, 0.18);
+    }
+
+    .meta-box-label {
+        font-size: 0.78rem;
+        opacity: 0.85;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+    }
+
+    .meta-box-value {
+        font-size: 1.55rem;
+        font-weight: 900;
+        color: var(--text-primary);
+    }
+
+    .results-container {
+        margin-top: 24px;
+    }
+
+    .category-results {
+        background: rgba(15, 23, 42, 0.95);
+        border-radius: 24px;
+        padding: 34px;
+        margin-bottom: 32px;
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.2);
+    }
+
+    .category-results-title {
+        font-size: 1.75rem;
+        color: #e2e8f0;
+        margin-bottom: 14px;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .category-results-title i {
+        color: var(--accent-alt);
+        font-size: 1.4rem;
+    }
+
+    .category-results-description {
+        color: #94a3b8;
+        margin-bottom: 28px;
+        font-size: 1rem;
+    }
+
+    .ranking-list {
+        display: grid;
+        gap: 18px;
+    }
+
+    .ranking-item {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 18px;
+        padding: 22px;
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 22px;
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        align-items: center;
+    }
+
+    .ranking-item:hover {
+        transform: translateY(-3px);
+        border-color: rgba(124, 58, 237, 0.45);
+        box-shadow: 0 20px 35px rgba(15, 23, 42, 0.22);
+    }
+
+    .ranking-left,
+    .ranking-mid,
+    .ranking-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .ranking-left {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ranking-badge {
+        min-width: 56px;
+        height: 56px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        font-size: 1.3rem;
+        color: #0f172a;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .ranking-badge.first {
+        background: linear-gradient(135deg, #fde047 0%, #fbbf24 100%);
+    }
+
+    .ranking-badge.second {
+        background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+    }
+
+    .ranking-badge.third {
+        background: linear-gradient(135deg, #f6ad55 0%, #c05621 100%);
+    }
+
+    .ranking-badge.other {
+        background: rgba(148, 163, 184, 0.18);
+        color: #e2e8f0;
+    }
+
+    .ranking-content {
+        display: grid;
+        gap: 12px;
+    }
+
+    .ranking-candidate-name {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #f8fafc;
+        margin: 0;
+    }
+
+    .ranking-candidate-description {
+        font-size: 0.95rem;
+        color: #cbd5e1;
+        margin: 0;
+        line-height: 1.55;
+    }
+
+    .ranking-vote-info {
+        display: grid;
+        gap: 14px;
+        justify-items: end;
+        text-align: right;
+    }
+
+    .vote-count-display {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: #cbd5e1;
+        font-size: 0.98rem;
+    }
+
+    .vote-count-display strong {
+        font-size: 1.45rem;
+        color: var(--accent-alt);
+        font-weight: 900;
+    }
+
+    .vote-percentage-display {
+        font-size: 0.95rem;
+        color: #94a3b8;
+    }
+
+    .ranking-progress {
+        width: 180px;
+    }
+
+    .progress-bar-container {
+        background: rgba(148, 163, 184, 0.18);
+        height: 12px;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent-alt) 0%, rgba(124, 58, 237, 0.9) 100%);
+        border-radius: inherit;
+        transition: width 0.5s ease;
+    }
+
+    .candidate-photo,
+    .candidate-photo-placeholder {
+        width: 76px;
+        height: 76px;
+        border-radius: 22px;
+        object-fit: cover;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: linear-gradient(135deg, #1e293b 0%, #111827 100%);
+    }
+
+    .candidate-photo-placeholder {
+        display: grid;
+        place-items: center;
+        color: #e2e8f0;
+        font-size: 1.6rem;
+    }
+
+    .refresh-info {
+        background: rgba(34, 211, 238, 0.12);
+        border: 1px solid rgba(34, 211, 238, 0.25);
+        color: #e0f2fe;
+    }
+
+    .refresh-info i {
+        font-size: 1.2rem;
+    }
+
+    .access-denied-message {
+        background: rgba(248, 113, 113, 0.14);
+        border: 1px solid rgba(248, 113, 113, 0.25);
+        color: #fee2e2;
+    }
+
+    .back-to-voting {
+        display: inline-flex;
+        margin-top: 30px;
+        padding: 14px 32px;
+        background: linear-gradient(135deg, #8b5cf6 0%, #22d3ee 100%);
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 999px;
+        font-weight: 700;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .back-to-voting:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 40px rgba(34, 211, 238, 0.2);
+    }
+
+    @media (max-width: 1024px) {
+        .results-header-content {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .results-page {
+            padding: 28px 0 40px;
+        }
+
+        .results-header {
+            padding: 28px 22px;
+        }
+
+        .category-results {
+            padding: 24px;
+        }
+
+        .category-results-title {
+            font-size: 1.45rem;
+        }
+
+        .ranking-item {
+            grid-template-columns: 1fr;
+            gap: 16px;
+            padding: 20px;
+        }
+
+        .ranking-left,
+        .ranking-right {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .ranking-right {
+            justify-content: flex-start;
+            gap: 18px;
+        }
+
+        .ranking-vote-info {
+            justify-items: start;
+            text-align: left;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            max-width: none;
+        }
+    }
+
+    @media (max-width: 4800px) {
+        .results-header-info h1 {
+            letter-spacing: -0.03em;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .results-header-info h1 {
+            font-size: 1.95rem;
+        }
+
+        .results-header-image {
+            min-height: 220px;
+        }
+
+        .candidate-photo,
+        .candidate-photo-placeholder {
+            width: 62px;
+            height: 62px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container results-page">
+    <!-- Results Header -->
+    <div class="results-header">
+        <div class="results-header-content">
+            {% if campaign.banner %}
+                <div class="results-header-image">
+                    <img src="{{ campaign.banner.url }}" alt="{{ campaign.title }}">
+                </div>
+            {% else %}
+                <div class="results-header-image">
+                    <div style="background: rgba(0,0,0,0.2); padding: 40px; border-radius: 8px; text-align: center;">
+                        <i class="fas fa-chart-bar" style="font-size: 3rem; opacity: 0.8;"></i>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <div class="results-header-info">
+                <h1>{{ campaign.title }} - Results</h1>
+                <p>{{ campaign.description }}</p>
+                
+                <div class="results-meta-info">
+                    <div class="meta-box">
+                        <div class="meta-box-label">Total Votes Cast</div>
+                        <div class="meta-box-value">{{ total_votes }}</div>
+                    </div>
+                    <div class="meta-box">
+                        <div class="meta-box-label">Categories</div>
+                        <div class="meta-box-value">{{ categories_count }}</div>
+                    </div>
+                    <div class="meta-box">
+                        <div class="meta-box-label">Status</div>
+                        <div class="meta-box-value">
+                            {% if campaign.is_active %}
+                                <span style="color: #FFD700;">Active</span>
+                            {% else %}
+                                <span style="color: #FFFFFF;">Closed</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Access Control -->
+    {% if not can_view_results %}
+        <div class="access-denied-message">
+            <i class="fas fa-lock"></i> Results are not currently available.
+            {% if campaign.results_visibility == 'after' and campaign.is_active %}
+                Results will be available after the voting period ends on {{ campaign.end_date|date:"M d, Y" }}.
+            {% elif campaign.results_visibility == 'hidden' %}
+                Results for this campaign are not publicly available.
+            {% elif campaign.results_access == 'admin' %}
+                Only administrators can view these results.
+            {% elif campaign.results_access == 'authenticated' and not user.is_authenticated %}
+                Please <a href="{% url 'login' %}" style="color: #721c24; text-decoration: underline;">log in</a> to view results.
+            {% endif %}
+        </div>
+        <a href="{% url 'voting:campaign_detail' campaign.pk %}" class="back-to-voting">
+            <i class="fas fa-arrow-left"></i> Back to Voting
+        </a>
+    {% else %}
+        <!-- Live Update Info -->
+        <div class="refresh-info">
+            <i class="fas fa-sync-alt"></i>
+            <span>Results update automatically every 5 seconds</span>
+        </div>
+        
+        <!-- Results Container -->
+        <div class="results-container">
+            {% if categories %}
+                {% for category in categories %}
+                    <div class="category-results" id="category-{{ category.id }}">
+                        <h2 class="category-results-title">
+                            <i class="fas fa-trophy"></i>
+                            {{ category.name }}
+                        </h2>
+                        
+                        {% if category.description %}
+                            <p class="category-results-description">{{ category.description }}</p>
+                        {% endif %}
+                        
+                        {% with candidates=category.sorted_candidates %}
+                            {% if candidates %}
+                                <div class="ranking-list">
+                                    {% for candidate in candidates %}
+                                        <div class="ranking-item" id="candidate-{{ candidate.id }}">
+                                            <!-- Candidate Photo -->
+                                            {% if candidate.photo %}
+                                                <img src="{{ candidate.photo.url }}" alt="{{ candidate.name }}" class="candidate-photo">
+                                            {% else %}
+                                                <div class="candidate-photo-placeholder">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                            {% endif %}
+                                            
+                                            <!-- Ranking Badge -->
+                                            <div class="ranking-badge {% if forloop.counter == 1 %}first{% elif forloop.counter == 2 %}second{% elif forloop.counter == 3 %}third{% else %}other{% endif %}">
+                                                {{ forloop.counter }}
+                                            </div>
+                                            
+                                            <!-- Candidate Info -->
+                                            <div class="ranking-content">
+                                                <div class="ranking-candidate-name">{{ candidate.name }}</div>
+                                                {% if candidate.description %}
+                                                    <div class="ranking-candidate-description">{{ candidate.description }}</div>
+                                                {% endif %}
+                                            </div>
+                                            
+                                            <!-- Vote Statistics -->
+                                            <div class="ranking-right">
+                                                <div class="ranking-vote-info">
+                                                    <div>
+                                                        <div class="vote-count-display">
+                                                            <strong id="votes-{{ candidate.id }}">{{ candidate.vote_count }}</strong>
+                                                            <span>vote{{ candidate.vote_count|pluralize }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ranking-progress">
+                                                        <div class="progress-bar-container">
+                                                            <div class="progress-bar" id="bar-{{ candidate.id }}" 
+                                                                 style="width: {% if candidate.vote_percentage %}{{ candidate.vote_percentage }}%{% else %}0%{% endif %};"></div>
+                                                        </div>
+                                                        <div class="vote-percentage-display">
+                                                            <span id="percentage-{{ candidate.id }}">
+                                                                {% if candidate.vote_percentage %}{{ candidate.vote_percentage }}%{% else %}0%{% endif %}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {% if candidate.activity_photos.exists or candidate.achievements.exists or candidate.media_links.exists %}
+                                                <div class="view-activities-wrapper">
+                                                    <button class="view-activities-btn" type="button" onclick="toggleResultActivities(event, {{ candidate.id }})">
+                                                        <i class="fas fa-briefcase"></i>
+                                                        View Activities
+                                                    </button>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        {% if candidate.activity_photos.exists or candidate.achievements.exists or candidate.media_links.exists %}
+                                        <div class="activity-panel" id="activity-panel-{{ candidate.id }}">
+                                            <div class="activity-summary-grid">
+                                                {% if candidate.activity_photos.exists %}
+                                                <div class="activity-card">
+                                                    <div class="activity-card-title"><i class="fas fa-images"></i> Activity Gallery</div>
+                                                    <p>{{ candidate.activity_photos.count }} photo{{ candidate.activity_photos.count|pluralize }} available</p>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if candidate.achievements.exists %}
+                                                <div class="activity-card">
+                                                    <div class="activity-card-title"><i class="fas fa-trophy"></i> Achievements</div>
+                                                    <p>{{ candidate.achievements.count }} accomplishment{{ candidate.achievements.count|pluralize }}</p>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if candidate.media_links.exists %}
+                                                <div class="activity-card">
+                                                    <div class="activity-card-title"><i class="fas fa-video"></i> Media Showcase</div>
+                                                    <p>{{ candidate.media_links.count }} item{{ candidate.media_links.count|pluralize }}</p>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="activity-details-list">
+                                                {% if candidate.activity_photos.exists %}
+                                                <div class="activity-detail-item">
+                                                    <i class="fas fa-camera-retro"></i>
+                                                    <div class="activity-detail-text">
+                                                        <strong>{{ candidate.activity_photos.count }} activity photos</strong> highlight recent events and campaign moments.
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if candidate.achievements.exists %}
+                                                <div class="activity-detail-item">
+                                                    <i class="fas fa-award"></i>
+                                                    <div class="activity-detail-text">
+                                                        <strong>{{ candidate.achievements.count }} achievements</strong> showcase awards, milestones, and leadership successes.
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if candidate.media_links.exists %}
+                                                <div class="activity-detail-item">
+                                                    <i class="fas fa-play-circle"></i>
+                                                    <div class="activity-detail-text">
+                                                        <strong>{{ candidate.media_links.count }} media items</strong> includes videos, embeds, and campaign highlights.
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="no-results-message">
+                                    <i class="fas fa-inbox"></i> No votes yet in this category
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-results-message">
+                    <i class="fas fa-inbox"></i> No categories available for this campaign
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Action Buttons -->
+        <div style="margin-top: 40px; text-align: center;">
+            <a href="{% url 'voting:campaign_detail' campaign.pk %}" class="back-to-voting">
+                <i class="fas fa-arrow-left"></i> Back to Voting
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    // Auto-refresh results every 5 seconds
+    {% if can_view_results %}
+        const campaignId = {{ campaign.pk }};
+        
+        function updateResults() {
+            const categories = document.querySelectorAll('[id^="category-"]');
+            categories.forEach(categoryDiv => {
+                const categoryId = categoryDiv.id.match(/\d+/)[0];
+                
+                fetch(`{% url 'voting:get_results' campaign_id=0 category_id=0 %}`.replace('0/category/0', `${campaignId}/category/${categoryId}`))
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            data.candidates.forEach(candidate => {
+                                const votesEl = document.getElementById(`votes-${candidate.id}`);
+                                const percentageEl = document.getElementById(`percentage-${candidate.id}`);
+                                const barEl = document.getElementById(`bar-${candidate.id}`);
+                                
+                                if (votesEl) votesEl.textContent = candidate.votes;
+                                if (percentageEl) percentageEl.textContent = candidate.percentage > 0 ? `${candidate.percentage}%` : '0%';
+                                if (barEl) barEl.style.width = candidate.percentage + '%';
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error loading results:', error));
+            });
+        }
+        
+        // Update on page load
+        updateResults();
+        
+        // Update every 5 seconds
+        setInterval(updateResults, 5000);
+    {% endif %}
+
+    function toggleResultActivities(event, candidateId) {
+        const panel = document.getElementById(`activity-panel-${candidateId}`);
+        if (!panel) return;
+        panel.classList.toggle('open');
+        const button = event.currentTarget;
+        if (panel.classList.contains('open')) {
+            button.innerHTML = '<i class="fas fa-briefcase"></i> Hide Activities';
+        } else {
+            button.innerHTML = '<i class="fas fa-briefcase"></i> View Activities';
+        }
+    }
+</script>
+
+{% endblock %}

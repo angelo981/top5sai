@@ -1,0 +1,207 @@
+{% extends 'tickets/base.html' %}
+{% block extra_head %}
+<link href="/static/tickets/css/spinny.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<section class="spinny-hero">
+  <div class="spinny-hero-inner">
+    <div class="spinny-hero-left">
+      <div class="spinny-hero-media" role="img" aria-labelledby="event-title" style="background-image: url('{% if event and event.banner %}{{ event.banner.url }}{% else %}/static/tickets/img/default-hero.jpg{% endif %}')">
+        <div class="hero-media-flag">Featured Event</div>
+      </div>
+
+      <div class="hero-inline-summary">
+        {% if show_download_button and download_ticket_code %}
+        <div class="alert alert-success d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-3" role="status">
+          <div>
+            <strong>Ticket ready!</strong>
+            <div>Your ticket image is prepared and ready to download.</div>
+          </div>
+          <a class="btn btn-success" href="{% url 'tickets:download_ticket' code=download_ticket_code %}">Download Ticket Image</a>
+        </div>
+        {% endif %}
+
+        {% if ticket_confirmation %}
+        <div class="alert alert-info mb-3">
+          <strong>Thank you for booking!</strong>
+          <p class="mb-2">Your reservation is confirmed. Here are your ticket details:</p>
+          <dl class="row mb-2">
+            <dt class="col-sm-4">Event</dt>
+            <dd class="col-sm-8">{{ ticket_confirmation.event_title }}</dd>
+            <dt class="col-sm-4">Category</dt>
+            <dd class="col-sm-8">{{ ticket_confirmation.category }}</dd>
+            <dt class="col-sm-4">Quantity</dt>
+            <dd class="col-sm-8">{{ ticket_confirmation.quantity }}</dd>
+            <dt class="col-sm-4">Total paid</dt>
+            <dd class="col-sm-8">{{ ticket_confirmation.total_price }} RWF</dd>
+            <dt class="col-sm-4">Ticket code</dt>
+            <dd class="col-sm-8">{{ ticket_confirmation.ticket_code }}</dd>
+          </dl>
+          <a class="btn btn-success" href="{% url 'tickets:download_ticket' code=download_ticket_code %}">Download Ticket Image</a>
+        </div>
+        {% endif %}
+
+        <h1 class="hero-inline-title" id="event-title">{{ event.title }}</h1>
+        <div class="hero-inline-meta">
+          <div class="hero-inline-item"><strong>Date</strong><span>{{ event.start_datetime|date:"l, M d, Y" }}</span></div>
+          <div class="hero-inline-item"><strong>Location</strong><span>{{ event.venue }}</span></div>
+        </div>
+
+        <div class="about-inline-card">
+          <h2 id="about-heading">About This Event</h2>
+          <p class="spinny-hero-copy" aria-labelledby="about-heading">{{ event.description|linebreaks }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking panel moved up beside the hero image -->
+    <aside id="ticket-booking" class="spinny-booking hero-booking">
+      <div class="spinny-purchase">
+        <h3>Choose your tickets</h3>
+        <form method="post" action="{% url 'tickets:purchase_ticket' %}" class="spinny-form ticket-form">
+          {% csrf_token %}
+          <div class="spinny-tiers">
+            {% for category in event.categories.all %}
+            <label class="spinny-tier ticket-tier-card" data-category-id="{{ category.id }}">
+              <input type="radio" name="category_id" value="{{ category.id }}" {% if forloop.first %}checked{% endif %} class="tier-input" style="display:none;" aria-labelledby="tier-name-{{ category.id }} tier-price-{{ category.id }}">
+              <div class="tier-info">
+                <div class="tier-name" id="tier-name-{{ category.id }}">{{ category.name }}</div>
+                <div class="tier-price" id="tier-price-{{ category.id }}">{{ category.price }} RWF</div>
+                <div class="tier-availability" id="tier-availability-{{ category.id }}">
+                  {% if category.remaining_tickets > 0 %}
+                    {{ category.remaining_tickets }} left
+                  {% else %}
+                    Sold out
+                  {% endif %}
+                </div>
+              </div>
+              <div class="tier-badge">Selected</div>
+            </label>
+            {% empty %}
+            <div class="spinny-tier empty">No ticket categories configured.</div>
+            {% endfor %}
+          </div>
+
+          <div class="spinny-quantity">
+            <label id="quantity-label">Quantity</label>
+            <div class="qty-row">
+              <button type="button" class="qty-btn" id="qty-minus" aria-label="Decrease quantity">−</button>
+              <input type="number" name="quantity" id="quantity" value="1" min="1" aria-describedby="quantity-label">
+              <button type="button" class="qty-btn" id="qty-plus" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+
+          <div class="spinny-phone">
+            <label for="phone_number">Phone</label>
+            <input type="tel" name="phone_number" id="phone_number" placeholder="+250 788 123 456" required aria-label="Phone number">
+          </div>
+
+          <div class="spinny-summary">
+            <div class="row total"><span>Total</span><strong id="total" aria-live="polite">0.00 RWF</strong></div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-pay">Pay <span id="total-badge">0.00 RWF</span></button>
+        </form>
+      </div>
+    </aside>
+  </div>
+</section>
+
+
+{{ category_prices|json_script:'ticketPrices' }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const prices = JSON.parse(document.getElementById('ticketPrices').textContent || '{}');
+  const qtyInput = document.getElementById('quantity');
+  const totalBadge = document.getElementById('total-badge');
+  const totalEl = document.getElementById('total');
+  const form = document.querySelector('.ticket-form');
+
+  function getSelectedCategory() {
+    const r = document.querySelector('input[name="category_id"]:checked');
+    return r ? r.value : (document.querySelector('.ticket-tier-card[data-category-id]')?.dataset?.categoryId);
+  }
+
+  function updatePrice() {
+    const cat = getSelectedCategory();
+    const price = parseFloat(prices[cat] || 0);
+    let q = parseInt(qtyInput.value, 10) || 1;
+    if (q < 1) { q = 1; qtyInput.value = 1; }
+    const sub = price * q;
+    const fee = 0;
+    const total = sub + fee;
+    totalEl.textContent = total.toLocaleString() + ' RWF';
+    totalBadge.textContent = total.toLocaleString() + ' RWF';
+  }
+
+  function changeQuantity(delta) {
+    if (!qtyInput) return;
+    const current = parseInt(qtyInput.value, 10) || 1;
+    const nextValue = Math.max(1, current + delta);
+    qtyInput.value = nextValue;
+    qtyInput.dispatchEvent(new Event('change', { bubbles: true }));
+    updatePrice();
+  }
+
+  // Tier click — allow clicking the card to select
+  document.querySelectorAll('.ticket-tier-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const id = this.dataset.categoryId;
+      const radio = this.querySelector('input[name="category_id"]');
+      if (radio) { radio.checked = true; }
+      // update visual selected state
+      document.querySelectorAll('.ticket-tier-card.selected').forEach(c => c.classList.remove('selected'));
+      this.classList.add('selected');
+      updatePrice();
+    });
+  });
+
+  // Ensure keyboard/change selection also updates visual state
+  document.querySelectorAll('input[name="category_id"]').forEach(input => {
+    input.addEventListener('change', function() {
+      document.querySelectorAll('.ticket-tier-card.selected').forEach(c => c.classList.remove('selected'));
+      const card = this.closest('.ticket-tier-card');
+      if (card) card.classList.add('selected');
+      updatePrice();
+    });
+  });
+
+  if (form) {
+    form.addEventListener('click', function(e) {
+      const button = e.target.closest('.qty-btn');
+      if (!button) return;
+      e.preventDefault();
+      if (button.id === 'qty-plus') {
+        changeQuantity(1);
+      } else if (button.id === 'qty-minus') {
+        changeQuantity(-1);
+      }
+    });
+  }
+
+  if (qtyInput) {
+    qtyInput.addEventListener('input', updatePrice);
+    qtyInput.addEventListener('change', updatePrice);
+  }
+  document.querySelectorAll('input[name="category_id"]').forEach(i=>i.addEventListener('change', updatePrice));
+  updatePrice();
+
+  // Redirect to the dedicated reserve page with the selected ticket details.
+  if (form) {
+    const submitBtn = form.querySelector('button[type="submit"]');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const fd = new FormData(form);
+      const params = new URLSearchParams();
+      params.set('category_id', fd.get('category_id') || '');
+      params.set('quantity', fd.get('quantity') || '1');
+      params.set('phone_number', fd.get('phone_number') || '');
+      window.location.href = '{% url "tickets:reserve_tickets" %}?'+params.toString();
+    });
+  }
+});
+</script>
+
+{% endblock %}

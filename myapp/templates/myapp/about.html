@@ -1,0 +1,231 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block title %}About - TOP5SAI{% endblock %}
+
+{% block content %}
+<!-- Page Header Start -->
+<div class="container-fluid page-header pt-5 mb-6 wow fadeIn"
+     data-wow-delay="0.1s"
+     style="background: url('{% static 'img/03.jpg' %}') center center/cover no-repeat; min-height: 350px;">
+    <div class="container text-center pt-5" style="width:550px; height:auto">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="bg-white p-5" style="box-shadow:2px 4px 4px 8px skyblue; border-radius: 12px;">
+                    <h1 class="display-6 text-uppercase mb-3 animated slideInDown">About us</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+
+ <!-- About Start -->
+    <div class="container-fluid pt-6 pb-6 about-section">
+        <div class="container">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+                    <div class="about-img" style="border-radius: 22px;overflow: hidden;box-shadow: 0 8px 32px rgba(30, 60, 120, 0.13);display: flex;align-items: center;justify-content: center;background: #fff;width: 100%;height: 100%; margin-bottom: 0;">
+                        <img class="img-fluid"
+                            src="{% static 'img/r20.webp' %}"
+                            alt="About TOP 5 SAI"
+                            style="width: 800px; max-width: 480px; height: 400px; object-fit: cover; border-radius: 22px; box-shadow: 0 4px 18px rgba(30, 60, 120, 0.10); font-size: 1.1rem; margin: 0 auto; display: block;">
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s"
+                    style="background-color: rgb(216, 220, 220);border-radius: 10px;">
+                    <h1 class="display-6 text-uppercase mb-4">About TOP5SAI</h1>
+                    <p class="mb-4">TOP 5 SAI's approach to its tasks is straight forward. We create, we innovate, we
+                        enhance, and we promote. We use our skills to keep our client's business trustworthy and give
+                        their products or services a quality top of mind awareness.</p>
+                    <p class="mb-4">Voicer Recording Studio has three fully equipped studios, with a spacious tracking
+                        room, iso rooms, and a world class blend of state of the art and vintage gear. Our dedicated
+                        staff of engineers offers recording, mixing, mastering, post-production, ISDN, transfers, mobile
+                        recording, live sound, video production, and even small scale cd-manufacturing with print.</p>
+                    <p class="mb-4">Our studios are equipped to handle your project from beginning to end. We have top
+                        notch trained musicians at our fingertips, so if your music is lacking that extra edge, we can
+                        maximize sound to the fullest.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- About End -->
+    <div class="timeline-section-wrapper">
+        <div class="section-header">
+            <h2 class="section-title">BASIC HISTORICAL INFORMATION</h2>
+            <div class="title-underline"></div>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <h3 class="year">2020</h3>
+                    <h4>Broadcasting service</h4>
+                    <p>Expanding broadcasting service and event services across the country</p>
+                </div>
+            </div>
+
+            <div class="timeline-item right">
+                <div class="timeline-content">
+                    <h3 class="year">2016</h3>
+                    <h4>Energy Radio</h4>
+                    <p>Starting broadcasting services through Energy Radio.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <h3 class="year">2014</h3>
+                    <h4>Bridge Records Studio</h4>
+                    <p>Acquired Bridge Records Studio, and expanding its activities in Kigali.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item right">
+                <div class="timeline-content">
+                    <h3 class="year">2010</h3>
+                    <h4>Recreation Center & Future Talents</h4>
+                    <p>TOPS Entertainment initiated Musanze Recreation Center & Future Talents Project</p>
+                </div>
+            </div>
+
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <h3 class="year">2007</h3>
+                    <h4>Event Planning & Management</h4>
+                    <p>The start of TOPS Event Planning & Management Department.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item right">
+                <div class="timeline-content">
+                    <h3 class="year">2003</h3>
+                    <h4>Audio visual</h4>
+                    <p>TOPS Audio visual services studio</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="container-fluid py-6" style="background: #f7f9fc;">
+        <div class="container">
+            <div class="text-center mb-5">
+                <p class="text-primary text-uppercase fw-bold mb-2">What we do</p>
+                <h2 class="display-6 text-uppercase mb-3">Creative production, delivered professionally</h2>
+                <p class="mx-auto mb-0" style="max-width: 720px;">TOP5SAI brings event management, sound engineering, and multimedia production together to create memorable experiences for businesses, artists, and communities.</p>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-md-6 col-lg-4"><div class="bg-white h-100 p-4" style="border-radius: 12px; box-shadow: 0 6px 24px rgba(30, 60, 120, 0.08);"><h5 class="text-uppercase mb-3">Event Management</h5><p class="mb-0" style="text-align: justify;">Planning, organizing, and executing events of all sizes while creating seamless experiences for clients and guests.</p></div></div>
+                <div class="col-md-6 col-lg-4"><div class="bg-white h-100 p-4" style="border-radius: 12px; box-shadow: 0 6px 24px rgba(30, 60, 120, 0.08);"><h5 class="text-uppercase mb-3">Sound Engineering</h5><p class="mb-0" style="text-align: justify;">Professional audio setup, mixing, and mastering for concerts, conferences, productions, and live experiences.</p></div></div>
+                <div class="col-md-6 col-lg-4"><div class="bg-white h-100 p-4" style="border-radius: 12px; box-shadow: 0 6px 24px rgba(30, 60, 120, 0.08);"><h5 class="text-uppercase mb-3">Lighting and Visuals</h5><p class="mb-0" style="text-align: justify;">Creative lighting design and visual effects that enhance the atmosphere and identity of every event.</p></div></div>
+                <div class="col-md-6 col-lg-4"><div class="bg-white h-100 p-4" style="border-radius: 12px; box-shadow: 0 6px 24px rgba(30, 60, 120, 0.08);"><h5 class="text-uppercase mb-3">Stage and Equipment</h5><p class="mb-0" style="text-align: justify;">Custom stage setup plus high-quality sound, lighting, and multimedia equipment available for hire.</p></div></div>
+                <div class="col-md-6 col-lg-4"><div class="bg-white h-100 p-4" style="border-radius: 12px; box-shadow: 0 6px 24px rgba(30, 60, 120, 0.08);"><h5 class="text-uppercase mb-3">Music Production</h5><p class="mb-0" style="text-align: justify;">Studio recording, mixing, and production for artists and brands, supported by experienced creative and technical specialists.</p></div></div>
+                <div class="col-md-6 col-lg-4"><div class="bg-white h-100 p-4" style="border-radius: 12px; box-shadow: 0 6px 24px rgba(30, 60, 120, 0.08);"><h5 class="text-uppercase mb-3">Brand Promotion</h5><p class="mb-0" style="text-align: justify;">Multimedia solutions for advertising, reputation management, and brand activation that bring audiences closer to businesses.</p></div></div>
+            </div>
+
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-6">
+                    <div class="h-100 p-4 p-lg-5 text-white" style="background: #175aa3; border-radius: 12px;">
+                        <p class="text-uppercase fw-bold mb-2" style="color: #f4c15d;">Experience you can trust</p>
+                        <h3 class="text-uppercase mb-4">Our professional team</h3>
+                        <p style="text-align: justify;">Our certified sound engineers, creative event planners, lighting specialists, and multimedia experts work closely with clients to understand their vision and deliver results that exceed expectations.</p>
+                        <h5 class="text-uppercase mt-4 mb-3">Selected success stories</h5>
+                        <ul class="mb-0 ps-3">
+                            <li class="mb-2">Full event production and sound engineering for the ACGC Festival in Rwanda.</li>
+                            <li class="mb-2">Audio-visual solutions for the 13th AARSE International Conference.</li>
+                            <li class="mb-2">Music production and engineering for leading Rwandan artists.</li>
+                            <li>Branding and multimedia campaigns for corporate clients.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="h-100 bg-white p-4 p-lg-5" style="border-radius: 12px; box-shadow: 0 6px 24px rgba(30, 60, 120, 0.08);">
+                        <p class="text-primary text-uppercase fw-bold mb-2">Why TOP5SAI</p>
+                        <h3 class="text-uppercase mb-4">Built around your success</h3>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-3"><i class="fa fa-check text-primary me-2"></i>Proven experience in event management and sound engineering.</li>
+                            <li class="mb-3"><i class="fa fa-check text-primary me-2"></i>State-of-the-art equipment and technology.</li>
+                            <li class="mb-3"><i class="fa fa-check text-primary me-2"></i>Creative and technical expertise in one team.</li>
+                            <li><i class="fa fa-check text-primary me-2"></i>Commitment to client satisfaction and excellence.</li>
+                        </ul>
+                        <hr>
+                        <h5 class="text-uppercase mb-3">Let us work together</h5>
+                        <p class="mb-1"><strong>Email:</strong> info@top5sai.com</p>
+                        <p class="mb-1"><strong>Phone:</strong> 0788 566 175</p>
+                        <p class="mb-0"><strong>Locations:</strong> Kigali and Musanze, Rwanda</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Start -->
+    <div class="container-fluid pt-6 pb-6 features-section">
+        <div class="container pt-4">
+            <div class="row feature-row wow fadeIn justify-content-center" data-wow-delay="0.1s">
+                <div class="col-12 col-sm-6 col-lg-4 d-flex justify-content-center mb-4 wow fadeIn"
+                    data-wow-delay="0.3s">
+                    <div class="feature-item h-100">
+                        <div class="feature-icon btn-xxl-square bg-primary mb-4 mt-n4">
+                            <i class="fa fa-bullseye fa-2x text-white"></i>
+                        </div>
+                        <div class="p-5 pt-0">
+                            <h5 class="text-uppercase mb-3">Our Mission</h5>
+                            <p>We are committed to provide excellent service in multimedia & events management which
+                                create moments and occasions of Visibility, Joy & Happiness through our brands with an
+                                added value and make a difference..</p>
+                            <p>“What we do is for our clients and their short-term and long- term goals and growth of
+                                their business. The quality of our services puts their products or services at the front
+                                display of their targeted clients.”</p>
+                            <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
+                                href="#"><b class="bg-white pe-3">Read More</b> <i
+                                    class="bi bi-arrow-right bg-white ps-3"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-4 d-flex justify-content-center mb-4 wow fadeIn"
+                    data-wow-delay="0.4s">
+                    <div class="feature-item h-100">
+                        <div class="feature-icon btn-xxl-square bg-primary mb-4 mt-n4">
+                            <i class="fa fa-eye fa-2x text-white"></i>
+                        </div>
+                        <div class="p-5 pt-0">
+                            <h5 class="text-uppercase">Our Vision</h5>
+                            <p>To become the leading 360 degrees Multimedia and Event Management company in Rwanda. We
+                                achieve this goal by meeting and going beyond our clients’ expectations. Creativity and
+                                Innovation along with Delivery of Outstanding services are what we constantly bring to
+                                the table.</p>
+                            <p>“Quality of our work always reflects what our clients expects to get out of our
+                                partnership but our drives roots from the need to go beyond their expectations. Through
+                                this, we are able build long lasting and sustainable relationships.”</p>
+                            <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
+                                href="#"><b class="bg-white pe-3">Read More</b> <i
+                                    class="bi bi-arrow-right bg-white ps-3"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-4 d-flex justify-content-center mb-4 wow fadeIn"
+                    data-wow-delay="0.5s">
+                    <div class="feature-item h-100">
+                        <div class="feature-icon btn-xxl-square bg-primary mb-4 mt-n4">
+                            <i class="fa fa-flag-checkered fa-2x text-white"></i>
+                        </div>
+                        <div class="p-5 pt-0">
+                            <h5 class="text-uppercase">Our Goal</h5>
+                            <p>To add creative value and produce high quality event/content that is relevant and bring
+                                our clients closer to their respective audiences.</p>
+                            <p>“Our customers’ success reflects our success. This is why bringing your audience close to
+                                their targeted market and helping them to achieve their targeted market share is what we
+                                focus on as we deliver value needed in their area of interests.”</p>
+                            <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
+                                href="#"><b class="bg-white pe-3">Read More</b> <i
+                                    class="bi bi-arrow-right bg-white ps-3"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Features End -->
+{% endblock %}

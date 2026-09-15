@@ -1,0 +1,128 @@
+{% extends 'tickets/base.html' %}
+{% block extra_head %}
+<link href="/static/tickets/css/spinny.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<section class="spinny-hero">
+  <div class="spinny-hero-inner">
+    <div class="spinny-meta">
+      <div class="spinny-organizer">{{ event.organizer.name if event and event.organizer else 'Organizer' }}</div>
+      <h1 class="spinny-title">{{ event.title if event else 'Sample Festival' }}</h1>
+      <div class="spinny-details">{{ event.venue if event else 'Venue' }} • {{ event.start_datetime|date:"M d, Y" if event else '' }}</div>
+      <a href="#spinny-book" class="btn btn-cta">Get Tickets</a>
+    </div>
+    <div class="spinny-hero-media" style="background-image: url('{{ event.banner.url if event and event.banner else '/static/tickets/img/default-hero.jpg' }}')"></div>
+  </div>
+</section>
+
+<div class="spinny-container">
+  <div class="spinny-main">
+    <div class="spinny-info">
+      <h2>About</h2>
+      <p>{{ event.description|linebreaks if event else 'An energetic festival with live music, DJs and experiences.' }}</p>
+
+      <h3>Location</h3>
+      <p>{{ event.venue if event else 'Venue address' }}</p>
+
+      <h3>FAQ</h3>
+      <p>Questions about tickets? Contact the organizer.</p>
+    </div>
+
+    <aside id="spinny-book" class="spinny-booking">
+      <div class="spinny-purchase">
+        <h3>Choose your tickets</h3>
+        <form method="post" action="{% url 'tickets:purchase_ticket' %}" class="spinny-form">
+          {% csrf_token %}
+          <div class="spinny-tiers">
+            {% for category in categories %}
+            <label class="spinny-tier">
+              <input type="radio" name="category_id" value="{{ category.id }}" {% if forloop.first %}checked{% endif %}>
+              <div class="tier-info">
+                <div class="tier-name">{{ category.name }}</div>
+                <div class="tier-price">{{ category.price }} RWF</div>
+              </div>
+            </label>
+            {% empty %}
+            <div class="spinny-tier empty">No ticket categories configured.</div>
+            {% endfor %}
+          </div>
+
+          <div class="spinny-quantity">
+            <label>Quantity</label>
+            <div class="qty-row">
+              <button type="button" class="qty-btn" id="spinny-minus">−</button>
+              <input type="number" name="quantity" id="spinny-qty" value="1" min="1">
+              <button type="button" class="qty-btn" id="spinny-plus">+</button>
+            </div>
+          </div>
+
+          <div class="spinny-phone">
+            <label>Phone</label>
+            <input type="tel" name="phone_number" placeholder="+250 788 123 456" required>
+          </div>
+
+          <div class="spinny-summary">
+            <div class="row total"><span>Total</span><strong id="spinny-total">0.00 RWF</strong></div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-pay">Pay <span id="spinny-total-badge">0.00 RWF</span></button>
+        </form>
+      </div>
+    </aside>
+  </div>
+</div>
+
+{{ category_prices|json_script:'spinnyPrices' }}
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const prices = JSON.parse(document.getElementById('spinnyPrices').textContent || '{}');
+
+  function getSelectedCategory(){
+    const r = document.querySelector('input[name="category_id"]:checked');
+    return r ? r.value : Object.keys(prices)[0];
+  }
+
+  function update(){
+    const cat = getSelectedCategory();
+    const price = parseFloat(prices[cat] || 0);
+    let q = parseInt(qtyInput.value,10) || 1;
+    if(q<1){ q=1; qtyInput.value=1 }
+    const sub = price * q;
+    const fee = 0;
+    const total = sub + fee;
+    document.getElementById('spinny-total').textContent = total.toLocaleString() + ' RWF';
+    document.getElementById('spinny-total-badge').textContent = total.toLocaleString() + ' RWF';
+  }
+
+  function changeQuantity(delta){
+    if (!qtyInput) return;
+    const current = parseInt(qtyInput.value,10) || 1;
+    qtyInput.value = Math.max(1, current + delta);
+    qtyInput.dispatchEvent(new Event('change', { bubbles: true }));
+    update();
+  }
+
+  if (form) {
+    form.addEventListener('click', function(e) {
+      const button = e.target.closest('.qty-btn');
+      if (!button) return;
+      e.preventDefault();
+      if (button.id === 'spinny-plus') {
+        changeQuantity(1);
+      } else if (button.id === 'spinny-minus') {
+        changeQuantity(-1);
+      }
+    });
+  }
+
+  if (qtyInput) {
+    qtyInput.addEventListener('input', update);
+    qtyInput.addEventListener('change', update);
+  }
+  document.querySelectorAll('input[name="category_id"]').forEach(i=>i.addEventListener('change', update));
+  update();
+});
+</script>
+
+{% endblock %}

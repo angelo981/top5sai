@@ -1,0 +1,89 @@
+{% extends 'tickets/base.html' %}
+{% block extra_head %}
+<link href="/static/tickets/css/spinny.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="reserve-shell">
+  <div class="reserve-card">
+    <div class="reserve-card__hero">
+      <div>
+        <p class="reserve-eyebrow">Secure checkout</p>
+        <h2>Reserve Tickets</h2>
+        <p class="reserve-subtitle">Choose your payment method and share your contact details to confirm your booking.</p>
+      </div>
+      <div class="reserve-badge">Premium flow</div>
+    </div>
+
+    {% if selected_category %}
+    <div class="reserve-summary">
+      <div class="reserve-summary__info">
+        <strong>{{ selected_category.event.title }}</strong>
+        <span>{{ selected_category.name }} × {{ selected_quantity }}</span>
+      </div>
+      <div class="reserve-summary__price">{{ total_amount|floatformat:2 }} RWF</div>
+    </div>
+    {% endif %}
+
+    {% if form.errors %}
+      <div class="alert alert-danger mb-4">
+        <h4 class="alert-heading">Reservation not completed</h4>
+        <p>Please fix the highlighted fields below and try again.</p>
+        <ul class="mb-0">
+          {% for field, errors in form.errors.items %}
+            <li><strong>{{ field|capfirst }}</strong>: {{ errors|join:", " }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <form method="post" class="reserve-form">
+      {% csrf_token %}
+      <div class="reserve-summary preserve-summary mb-3">
+        {% if selected_category %}
+          <p class="mb-1 text-muted">Selected ticket</p>
+          <p class="mb-0"><strong>{{ selected_category.name }}</strong> for <strong>{{ selected_category.event.title }}</strong></p>
+        {% else %}
+          <p class="mb-0 text-muted">Select a ticket category above to continue.</p>
+        {% endif %}
+      </div>
+
+      <input type="hidden" name="category_id" value="{{ form.category_id.value|default:selected_category.id }}">
+      <input type="hidden" name="quantity" value="{{ form.quantity.value|default:selected_quantity }}">
+
+      <div class="reserve-field">
+        <label for="id_payment_method">Payment method</label>
+        {{ form.payment_method }}
+        {% if form.payment_method.errors %}
+          <div class="text-danger small mt-1">{{ form.payment_method.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="reserve-field">
+        <label for="id_email_address">Email address</label>
+        {{ form.email_address }}
+        {% if form.email_address.errors %}
+          <div class="text-danger small mt-1">{{ form.email_address.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="reserve-field">
+        <label for="id_phone_number">Phone number</label>
+        {{ form.phone_number }}
+        {% if form.phone_number.errors %}
+          <div class="text-danger small mt-1">{{ form.phone_number.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="reserve-actions">
+        <button type="submit" class="btn btn-pay reserve-submit">Proceed to payment</button>
+        {% if selected_category and selected_category.event %}
+          <a href="{% url 'tickets:event_detail' slug=selected_category.event.slug %}" class="btn btn-outline-light reserve-back">Back</a>
+        {% else %}
+          <a href="{% url 'tickets:event_list' %}" class="btn btn-outline-light reserve-back">Back</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

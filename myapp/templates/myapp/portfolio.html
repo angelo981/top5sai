@@ -1,0 +1,106 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block title %}Portfolio - TOP5SAI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/portfolio.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header Start -->
+   <div class="portfolio-header">
+        <h1>Our Portfolio</h1>
+        <p>
+            Explore our recent projects, events, and multimedia productions.<br>
+            We are proud to showcase our work with leading brands and organizations.
+        </p>
+    </div>
+<!-- Page Header End -->
+
+<!-- Portfolio Section Start -->
+<div class="container-fluid pt-6 pb-6" style="background: #f9f9f9;">
+    <div class="container portfolio-grid">
+        <div class="row g-4">
+            <!-- Portfolio Event 1 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="portfolio-card d-flex flex-column align-items-center">
+                    <img src="{% static 'img/ACGC.jpg' %}" alt="ACGC Festival 2022" class="portfolio-img mb-3">
+                    <div class="portfolio-info text-center">
+                        <div class="portfolio-title">ACGC Festival 2022 (Africa Unity Concert) - Rwanda</div>
+                        <div class="portfolio-desc">From March 23 to 28th 2021</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Portfolio Event 2 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="portfolio-card d-flex flex-column align-items-center">
+                    <img src="{% static 'img/AARSE_2022_02.jpg' %}" alt="13th AARSE International Conference"
+                        class="portfolio-img mb-3">
+                    <div class="portfolio-info text-center">
+                        <div class="portfolio-title">13th AARSE International Conference, AARSE 2022</div>
+                        <div class="portfolio-desc">24th-28th October 2022</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Portfolio Event 3 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="portfolio-card d-flex flex-column align-items-center">
+                    <img src="{% static 'img/Diosese shyira.jpg' %}" alt="International Revival Convention by Shyira Diocese"
+                        class="portfolio-img mb-3">
+                    <div class="portfolio-info text-center">
+                        <div class="portfolio-title">International Revival Convention by Shyira Diocese</div>
+                        <div class="portfolio-desc">24th to 27th August 2023</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Portfolio Event 4 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="portfolio-card d-flex flex-column align-items-center">
+                    <img src="{% static 'img/12.jpg' %}" alt="INES RUHENGERI 12th graduation" class="portfolio-img mb-3">
+                    <div class="portfolio-info text-center">
+                        <div class="portfolio-title">INES RUHENGERI 12th Graduation Ceremony</div>
+                        <div class="portfolio-desc">19th March 2021</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Portfolio Event 5 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="portfolio-card d-flex flex-column align-items-center">
+                    <img src="{% static 'img/national disester risk.jpg' %}"
+                        alt="NATIONAL DISASTER RISK REDUCTION AND MANAGMENT CONFERENCE" class="portfolio-img mb-3">
+                    <div class="portfolio-info text-center" style="height: 120px;">
+                        <div class="portfolio-title" style="font-size: 20px;">NATIONAL DISASTER RISK REDUCTION AND
+                            MANAGMENT CONFERENCE</div>
+                        <div class="portfolio-desc">7th November 2024</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Event 6 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="portfolio-card d-flex flex-column align-items-center">
+                    <img src="{% static 'img/ikirenga culture.jpg' %}" alt="IKIRENGA CULTURE TOURISM FESTIVAL 2nd EDITION"
+                        class="portfolio-img mb-3">
+                    <div class="portfolio-info text-center">
+                        <div class="portfolio-title">IKIRENGA CULTURE TOURISM FESTIVAL 2nd EDITION</div>
+                        <div class="portfolio-desc">26th to 1st September 2023</div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Portfolio Section End -->
+
+<!-- Call to Action -->
+<div class="container-fluid py-5" style="background: linear-gradient(90deg, #09b4ed 0%, #1a237e 100%);">
+    <div class="container text-center">
+        <h3 class="text-white mb-4">Ready to Create Your Next Event?</h3>
+        <p class="text-white-50 mb-4">Discover how we can bring your vision to life with our professional multimedia and event management services.</p>
+        <a href="{% url 'contact' %}" class="btn btn-light btn-lg px-5">Get Started Today</a>
+    </div>
+</div>
+<!-- Call to Action End -->
+{% endblock %}

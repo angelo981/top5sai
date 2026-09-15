@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <body style="margin:0; padding:0; background:#f4f6fb; font-family:Arial, sans-serif; color:#0f172a;">
+    <div style="max-width:680px; margin:24px auto; background:#ffffff; border-radius:24px; overflow:hidden; box-shadow:0 18px 50px rgba(15,23,42,0.08);">
+      <div style="background:linear-gradient(135deg,#0f172a 0%,#111b35 100%); padding:30px 36px; color:#fff;">
+        <p style="margin:0 0 8px; text-transform:uppercase; letter-spacing:0.18em; color:#ffb7a9; font-size:12px; font-weight:700;">TOP5SAI Tickets</p>
+        <h1 style="margin:0 0 10px; font-size:28px;">Your ticket is ready</h1>
+        <p style="margin:0; line-height:1.7; color:#e2e8f0;">Your entry pass for {{ event.title }} has been prepared. Download the attached QR ticket and keep it handy for entry.</p>
+      </div>
+      <div style="padding:32px 36px 36px;">
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:18px; padding:20px 22px; margin-bottom:18px;">
+          <strong style="display:block; margin-bottom:8px; font-size:16px;">{{ event.title }}</strong>
+          <div style="color:#475569; line-height:1.7;">
+            <div>Category: {{ category.name }}</div>
+            <div>Quantity: {{ purchase.quantity }}</div>
+            <div>Venue: {{ event.venue }}</div>
+            <div>Date: {{ event.start_datetime|date:"d M Y, H:i" }}</div>
+          </div>
+        </div>
+        <p style="margin:0 0 16px; color:#334155; line-height:1.7;">A premium QR ticket is attached to this email. You can download it directly from the attachment and save it to your phone or computer.</p>
+        <a href="{% url 'tickets:download_ticket' code=ticket.code %}" style="display:inline-block; background:linear-gradient(90deg,#ff6b5c 0%,#ff8d70 100%); color:#fff; text-decoration:none; padding:12px 18px; border-radius:999px; font-weight:700;">Download ticket</a>
+      </div>
+    </div>
+  </body>
+</html>

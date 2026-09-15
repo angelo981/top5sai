@@ -1,0 +1,1206 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block title %}Home - TOP5SAI{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Active Voting Campaign Banner Styles */
+    .voting-campaign-banner {
+        position: relative;
+        overflow: hidden;
+        border-radius: 16px;
+        background-color: #0d6efd;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 12px 40px rgba(0, 132, 255, 0.35);
+    }
+
+    .voting-campaign-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.3));
+        pointer-events: none;
+    }
+
+    .voting-campaign-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        color: white;
+        padding: 40px 30px;
+    }
+
+    .voting-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        padding: 10px 18px;
+        border-radius: 25px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        backdrop-filter: blur(15px);
+        animation: pulse 2s infinite;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+    }
+
+    .voting-live-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background: #ff6b6b;
+        border-radius: 50%;
+        margin-right: 8px;
+        animation: blink 1.5s infinite;
+        box-shadow: 0 0 10px #ff6b6b;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.75; }
+    }
+
+    @keyframes blink {
+        0%, 50%, 100% { opacity: 1; }
+        25%, 75% { opacity: 0.4; }
+    }
+
+    .voting-campaign-title {
+        font-size: 2.8rem;
+        font-weight: 900;
+        margin-bottom: 16px;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25);
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+    }
+
+    .voting-campaign-description {
+        font-size: 1.15rem;
+        line-height: 1.7;
+        margin-bottom: 24px;
+        opacity: 0.98;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        font-weight: 500;
+    }
+
+    .voting-campaign-stats {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+    }
+
+    .voting-stat-item {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%);
+        padding: 14px 24px;
+        border-radius: 14px;
+        backdrop-filter: blur(15px);
+        border: 1.5px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .voting-stat-item:hover {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.12) 100%);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+    }
+
+    .voting-stat-value {
+        font-size: 1.5rem;
+        font-weight: 900;
+        display: block;
+        letter-spacing: -1px;
+    }
+
+    .voting-stat-label {
+        font-size: 0.8rem;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 1.1px;
+        font-weight: 600;
+        margin-top: 4px;
+    }
+
+    .voting-cta-button {
+        display: inline-block;
+        padding: 16px 45px;
+        background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+        color: #0d6efd;
+        border: none;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 1.05rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+    }
+
+    .voting-cta-button:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+    }
+
+    .voting-cta-button:active {
+        transform: translateY(-2px);
+    }
+
+    .voting-cta-button i {
+        margin-right: 10px;
+    }
+
+    .countdown-timer {
+        margin-top: 22px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .countdown-timer i {
+        margin-right: 6px;
+        color: #ffd700;
+    }
+
+    .countdown-timer strong {
+        font-size: 1.2rem;
+        display: block;
+        margin-top: 6px;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+    }
+
+    @media (max-width: 768px) {
+        .voting-campaign-banner {
+            height: auto;
+            padding: 30px 0;
+        }
+
+        .voting-campaign-title {
+            font-size: 2rem;
+        }
+
+        .voting-campaign-description {
+            font-size: 1rem;
+        }
+
+        .voting-campaign-stats {
+            gap: 12px;
+        }
+
+        .voting-stat-item {
+            padding: 12px 18px;
+        }
+
+        .voting-stat-value {
+            font-size: 1.3rem;
+        }
+
+        .voting-cta-button {
+            padding: 14px 35px;
+            font-size: 0.95rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Carousel Start -->
+<div class="container-fluid p-0 mb-6 wow fadeIn" data-wow-delay="0.1s">
+    <div class="row">
+        <div class="col-lg-8">
+            <div id="header-carousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#header-carousel" data-bs-slide-to="0" class="active"
+                        aria-current="true" aria-label="Slide 1">
+                        <video class="img-fluid" src="{% static 'video/top0.mp4' %}" muted autoplay loop playsinline
+                            style="width: 100px; height: 56px; object-fit:cover; border-radius:6px;"></video>
+                    </button>
+                    <button type="button" data-bs-target="#header-carousel" data-bs-slide-to="1"
+                        aria-label="Slide 2">
+                        <video class="img-fluid" src="{% static 'video/top1.mp4' %}" muted autoplay loop playsinline
+                            style="width: 100px; height: 56px; object-fit:cover; border-radius:6px;"></video>
+                    </button>
+                    <button type="button" data-bs-target="#header-carousel" data-bs-slide-to="2"
+                        aria-label="Slide 3">
+                        <video class="img-fluid" src="{% static 'video/top2.mp4' %}" muted autoplay loop playsinline
+                            style="width: 100px; height: 56px; object-fit:cover; border-radius:6px;"></video>
+                    </button>
+                </div>
+                <div class="carousel-inner" style="width: 100%; height: 500px;">
+                    <div class="carousel-item active">
+                        <video id="carousel-video-1" class="w-100" src="{% static 'video/top0.mp4' %}" muted playsinline
+                            style="height: 500px; object-fit:cover;"></video>
+                        <div class="carousel-caption">
+                            <h1 style="font-size:2.5rem;"
+                                class="display-1 text-uppercase text-white mb-4 animated zoomIn">Welcome to TOP5SAI</h1>
+                            <a href="{% url 'service' %}" class="btn btn-primary py-3 px-4">Explore More</a>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <video id="carousel-video-2" class="w-100" src="{% static 'video/top1.mp4' %}" muted playsinline
+                            style="height: 500px; object-fit:cover;"></video>
+                        <div class="carousel-caption">
+                            <h1 style="font-size:2.5rem;" class="text-uppercase text-white mb-4 animated zoomIn">
+                                Live Events & Exciting Promotions</h1>
+                            <a href="{% url 'service' %}" class="btn btn-primary py-3 px-4">Explore More</a>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <video id="carousel-video-3" class="w-100" src="{% static 'video/top2.mp4' %}" muted playsinline
+                            style="height: 500px; object-fit:cover;"></video>
+                        <div class="carousel-caption">
+                            <h1 style="font-size:2.5rem;"
+                                class="display-1 text-uppercase text-white mb-4 animated zoomIn">Event Management</h1>
+                            <a href="{% url 'service' %}" class="btn btn-primary py-3 px-4">Explore More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Voting Campaign Banner or 5 Stars Section -->
+        <div class="col-lg-4 d-flex align-items-center justify-content-center bg-dark" style="height:500px;">
+            {% if active_campaigns %}
+                <!-- Active Voting Campaign Banner -->
+                {% for campaign in active_campaigns|slice:":1" %}
+                <div class="voting-campaign-banner w-100" style="background-image: url('{{ campaign.banner.url }}');">
+                    <div class="voting-campaign-content">
+                        <div class="voting-badge">
+                            <span class="voting-live-dot"></span>
+                            VOTING LIVE NOW
+                        </div>
+                        
+                        <h2 class="voting-campaign-title">{{ campaign.title }}</h2>
+                        <p class="voting-campaign-description">{{ campaign.short_description|default:campaign.description|truncatewords:15 }}</p>
+                        
+                        {% if campaign.total_votes > 0 or campaign.show_live_results %}
+                        <div class="voting-campaign-stats">
+                            <div class="voting-stat-item">
+                                <span class="voting-stat-value">{{ campaign.total_votes }}</span>
+                                <span class="voting-stat-label">Votes Cast</span>
+                            </div>
+                            <div class="voting-stat-item">
+                                <span class="voting-stat-value">{{ campaign.categories.count }}</span>
+                                <span class="voting-stat-label">Categories</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <a href="{% url 'voting:campaign_detail' campaign.pk %}" class="voting-cta-button">
+                            <i class="fas fa-vote-yea"></i> Vote Now
+                        </a>
+                        
+                        <div class="countdown-timer">
+                            <i class="fas fa-clock"></i> Voting ends in
+                            <strong>{{ campaign.days_remaining }} day{{ campaign.days_remaining|pluralize }}</strong>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Default 5 Stars Events Section -->
+                <div class="p-0 w-100 position-relative overflow-hidden" style="border-radius: 16px;">
+                    <img src="{% static 'img/5starsevent.png' %}" alt="5 Stars Events"
+                        style="width:100%; height:470px; object-fit:cover; border-radius:16px;">
+                    <div class="animated-text-overlay"
+                        style="position:absolute; top:0; left:0; right:0; bottom:-10; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center;">
+                        <h4 class="text-white mb-3 text-center animated-title">5 STARS EVENTS</h4>
+                        <p class="text-white text-center mb-0">Experience the best in multimedia and live events with us!</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<!-- Carousel End -->
+
+<!-- About Start -->
+<div class="container-fluid pt-6 pb-6">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+                <div class="about-img">
+                    <img class="img-fluid w-100" src="{% static 'img/r20.webp' %}">
+                </div>
+            </div>
+            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                <h1 class="display-6 text-uppercase mb-4">Who we serve</h1>
+                <p class="mb-4">TOP5SAI is the leading source for the latest events in RWANDA. Discover where events
+                    happen and everything in between!.</p>
+                <div class="row g-5 mb-4">
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0 btn-xl-square bg-light me-3">
+                                <i class="fa fa-users-cog fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="lh-base text-uppercase mb-0">Certified Expert & Team</h5>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0 btn-xl-square bg-light me-3">
+                                <i class="fa fa-tachometer-alt fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="lh-base text-uppercase mb-0">Fast & Reliable Services</h5>
+                        </div>
+                    </div>
+                </div>
+                <p><i class="fa fa-check-square text-primary me-3"></i>Equipments Hire(Lighting, Sound, Stage)</p>
+                <p><i class="fa fa-check-square text-primary me-3"></i>Sound System(In&Outdoor) and Decoration</p>
+                <p><i class="fa fa-check-square text-primary me-3"></i>Video, Audio & Films Production</p>
+                <div class="border border-5 border-primary p-4 text-center mt-4">
+                    <h4 class="lh-base text-uppercase mb-0">"We specialize in professional multimedia production and
+                        expert event management."</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- About End -->
+ <!-- Animated Video Gallery Start -->
+    <div class="container my-5" style="max-width: 1200px; width: 100%;">
+        <div class="row g-4 justify-content-center" style="margin:0;">
+            <h2 class="text-center mb-4">5 STARS EVENTS</h2>
+            <div class="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch" style="padding:12px;">
+                <div class="video-card wow fadeInUp" data-wow-delay="0.1s"
+                    style="border-radius:18px; overflow:hidden; box-shadow:0 4px 18px rgba(30,60,120,0.13); background:#fff; width:100%; display:flex; flex-direction:column;">
+                    <div class="ratio ratio-16x9" style="width:100%; min-height:220px;">
+                        <video autoplay loop muted playsinline
+                            style="width:100%; height:100%; object-fit:cover; border-radius:18px 18px 0 0;">
+                            <source src="{% static 'video/top1.mp4' %}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="p-3 text-center" style="flex:1;">
+                        <h5 class="mb-1" style="font-size:1.15rem; font-weight:600; color:#0d6efd;">Professional
+                            Wedding Service</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch" style="padding:12px;">
+                <div class="video-card wow fadeInUp" data-wow-delay="0.2s"
+                    style="border-radius:18px; overflow:hidden; box-shadow:0 4px 18px rgba(30,60,120,0.13); background:#fff; width:100%; display:flex; flex-direction:column;">
+                    <div class="ratio ratio-16x9" style="width:100%; min-height:220px;">
+                        <video autoplay loop muted playsinline
+                            style="width:100%; height:100%; object-fit:cover; border-radius:18px 18px 0 0;">
+                            <source src="{% static 'video/top2.mp4' %}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="p-3 text-center" style="flex:1;">
+                        <h5 class="mb-1" style="font-size:1.15rem; font-weight:600; color:#0d6efd;">Professional
+                            Lighting Stages</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch" style="padding:12px;">
+                <div class="video-card wow fadeInUp" data-wow-delay="0.3s"
+                    style="border-radius:18px; overflow:hidden; box-shadow:0 4px 18px rgba(30,60,120,0.13); background:#fff; width:100%; display:flex; flex-direction:column;">
+                    <div class="ratio ratio-16x9" style="width:100%; min-height:220px;">
+                        <video autoplay loop muted playsinline
+                            style="width:100%; height:100%; object-fit:cover; border-radius:18px 18px 0 0;">
+                            <source src="{% static 'video/top3.mp4' %}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="p-3 text-center" style="flex:1;">
+                        <h5 class="mb-1" style="font-size:1.15rem; font-weight:600; color:#0d6efd;">5 Stars
+                            Events</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Animated Video Gallery End -->
+    <!-- Animated Video Gallery End -->
+    <!-- Service Start --><!-- Service Start -->
+    <div class="container-fluid service pt-6 pb-6" style="background: #f8fafd;">
+        <div class="container">
+            <div class="section-header text-center mb-4">
+                <h1 class="section-title">UPCOMING EVENTS</h1>
+                <div class="title-underline"></div>
+                <p class="section-description">
+                    Experience a variety of entertainment with our upcoming events! From live concerts to
+                    special performances, there's something for everyone!
+                </p>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row g-4 justify-content-center">
+                <!-- Example Service Card -->
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="service-item w-100 h-100">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/r11.webp' %}" alt=""
+                                style="height:180px; object-fit:cover; border: 3px solid #0d6efd; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.13); margin-bottom: 18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2">Lighting Works</h5>
+                                <p style="font-size: 1rem;">If you are in need for equipment to plan or execute your
+                                    desired
+                                    event, look no further.</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="service-item w-100 h-100">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/r29.webp' %}" alt=""
+                                style="height:180px; object-fit:cover; border: 3px solid #0d6efd; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.13); margin-bottom: 18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2">Events Manager</h5>
+                                <p style="font-size: 1rem;">We understand the fundamental requirements for any event
+                                    to be
+                                    successful.</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="service-item w-100 h-100">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/r30.webp' %}" alt=""
+                                style="height:180px; object-fit:cover; border: 3px solid #0d6efd; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.13); margin-bottom: 18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2">Stages Setup</h5>
+                                <p style="font-size: 1rem;">Many of our equipment are less than three years old and
+                                    are
+                                    fully serviced prior to each event.</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/r1.webp' %}" alt=""
+                                style="height:180px; object-fit:cover; border: 3px solid #0d6efd; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.13); margin-bottom: 18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2">Screen System</h5>
+                                <p style="font-size: 1rem;">As TOP 5 SAI, we know that brands cast a magic spell on
+                                    customers and drive engagement.</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/r23.webp' %}" alt=""
+                                style="height:180px; object-fit:cover; border: 3px solid #0d6efd; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.13); margin-bottom: 18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2">Talents Show</h5>
+                                <p style="font-size: 1rem;">TOP5SAI has a wide range of products/services in
+                                    multimedia.</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/r14.webp' %}" alt=""
+                                style="height:180px; object-fit:cover; border: 3px solid #0d6efd; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.13); margin-bottom: 18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2">Profession Tools</h5>
+                                <p style="font-size: 1rem;">We find pleasure in designing and producing an event.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/r27.webp' %}" alt=""
+                                style="height:180px; object-fit:cover; border: 3px solid #0d6efd; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.13); margin-bottom: 18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2">Music Production</h5>
+                                <p style="font-size: 1rem;">Hit songs from TOP5SAI topped musical charts in Rwanda.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/r32.webp' %}" alt=""
+                                style="height:180px; object-fit:cover; border: 3px solid #0d6efd; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.13); margin-bottom: 18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2">Profession Tools</h5>
+                                <p style="font-size: 1rem;">We take our customers satisfaction very seriously. </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <!-- RECENT EVENTS -->
+    <div class="container-fluid service pt-6 pb-6" style="background: #f8fafd;">
+        <div class="container">
+            <div class="section-header text-center mb-4">
+                <h1 class="section-title">RECENT EVENTS</h1>
+                <div class="title-underline"></div>
+                <p class="section-description">
+                    Highlights of Our Latest Exciting Happenings!
+                </p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/top1.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">Israel Mbonyi Live Concert at INES Student Welcome Party</h5>
+                                <p style="font-size:1rem;">From  March 21, 2026.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/top2.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">INES Student Welcome Event Featuring Israel Mbonyi.</h5>
+                                <p style="font-size:1rem;">From  March 21, 2026.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/top3.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">Israel Mbonyi Worship Concert for New INES Students.</h5>
+                                <p style="font-size:1rem;">From  March 21, 2026.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/top4.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">Grand Student Welcome Celebration with Israel Mbonyi.</h5>
+                                <p style="font-size:1rem;">From  March 21, 2026.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/Chrale Ishema Ryacu christmas Carols concert 2025.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">Chrale Ishema Ryacu christmas Carols concert 2025</h5>
+                                <p style="font-size:1rem;">From  December 23, 2025.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/FAWE MQSTERCARD FOUNDATION  SCHOLARS 4TH GRADUATION CEREMONY- 2024.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">FAWE/MASTERCARD FOUNDATION  SCHOLARS 5TH GRADUATION CEREMONY- 2025</h5>
+                                <p style="font-size:1rem;">From  July 30, 2025.</p>
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/7th MIPC graduation 2025.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">
+                                    7th MIPC graduation 2025</h5>
+                                <p style="font-size:1rem;">From September 12, 2025.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/THE SOCIAL ENTREPRENEURSHIP DIALOGUE-2025.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">THE SOCIAL ENTREPRENEURSHIP DIALOGUE-2025</h5>
+                                <p style="font-size:1rem;">From Nov 27, 2025.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/BIG SING CONCERT PART IV-2025.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">BIG SING CONCERT PART IV-2025</h5>
+                                <p style="font-size:1rem;">From  December 23, 2025.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/ANA CONFERENCE-20251.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">ANA CONFERENCE-2025</h5>
+                                <p style="font-size:1rem;">From  NOV 03. 2025.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/Ines ruhengeri 17th graduation 2025.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">
+                                    Ines ruhengeri 17th graduation 2025</h5>
+                                <p style="font-size:1rem;">From September 12, 2025.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/President Campain Branding- 2024.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">President Campain Branding- 2024</h5>
+                                <p style="font-size:1rem;">From Jun 22, 2024.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                             <img class="img-fluid w-100" src="{% static 'img/ACGC.jpg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">ACGC
+                                    Festival 2022 (Africa Unity Concert) - Rwanda</h5>
+                                <p style="font-size:1rem;">From March 23 to 28th 2021.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/AARSE_2022_02.jpg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">13th
+                                    AARSE International Conference, AARSE 2022</h5>
+                                <p style="font-size:1rem;">24th-28th October 2022.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/Diosese shyira.jpg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">
+                                    International Revival Convention by Shyira Diocese 2023</h5>
+                                <p style="font-size:1rem;">24th to 27th August 2023.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+               <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/12.jpg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">INES
+                                    RUHENGERI 12th Graduation Ceremony 2021</h5>
+                                <p style="font-size:1rem;">19th March 2021.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/MINISTRY OF HEALTH- KWIBUKA31.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">
+                                    MINISTRY OF HEALTH- KWIBUKA31</h5>
+                                <p style="font-size:1rem;">From  April 2025.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/Ines ruhengeri 16th graduation 2024aa.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">Ines ruhengeri 16th graduation 2024</h5>
+                                <p style="font-size:1rem;">From  Oct 2024.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/KIVU BEACH FESTIVAL-2024.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">
+                                   KIVU BEACH FESTIVAL-2025   </h5>
+                                <p style="font-size:1rem;">From  Dec 2025.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="service-item w-100 h-100"
+                        style="background:#fff; border-radius:16px; box-shadow:0 4px 18px rgba(30,60,120,0.10);">
+                        <div class="service-inner pb-4 d-flex flex-column h-100">
+                            <img class="img-fluid w-100" src="{% static 'img/KIVU BEACH FESTIVAL-2025.jpeg' %}" alt=""
+                                style="height:180px; object-fit:cover; border:3px solid #0d6efd; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,0.13); margin-bottom:18px;">
+                            <div class="service-text px-4 pt-2 flex-grow-1">
+                                <h5 class="text-uppercase mb-2" style="font-size:1.1rem; font-weight:600;">
+                                    KIVU BEACH FESTIVAL-2024</h5>
+                                <p style="font-size:1rem;">From  Dec 2024.</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Repeat for additional recent event cards as needed -->
+            </div>
+        </div>
+    </div>
+    <br>
+    <!-- Service End -->
+        <!-- Service Start -->
+        <div class="services-container">
+            <div class="service-item">
+                <div class="icon-wrapper">
+                    <i class="fas fa-music"></i>
+                </div>
+                <button class="text-wrapper"
+                    style="color: rgb(12, 12, 12); background: #f4f8fd; border: none;  border-radius: 8px; padding: 10px 24px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+                    Music Production
+                </button>
+            </div>
+            <div class="service-item">
+                <div class="icon-wrapper">
+                    <i class="fas fa-microphone-alt"></i>
+                </div>
+                <button class="text-wrapper"
+                    style="color: rgb(12, 12, 12); background: #f4f8fd; border: none; border-radius: 8px; padding: 10px 24px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+                    Voice Over & On Camera Talents
+                </button>
+            </div>
+            <div class="service-item">
+                <div class="icon-wrapper">
+                    <i class="fas fa-video"></i>
+                </div>
+                <button class="text-wrapper"
+                    style="color: rgb(12, 12, 12); background: #f4f8fd; border: none; border-radius: 8px; padding: 10px 24px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+                    Video & Films Production
+                </button>
+            </div>
+            <div class="service-item">
+                <div class="icon-wrapper">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <button class="text-wrapper"
+                    style="color: rgb(12, 12, 12); background: #f4f8fd; border: none; border-radius: 8px; padding: 10px 24px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+                    Sound Systems (In & Outdoor)
+                </button>
+            </div>
+            <div class="service-item">
+                <div class="icon-wrapper">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <button class="text-wrapper"
+                    style="color: rgb(12, 12, 12); background: #f4f8fd; border: none;  border-radius: 8px; padding: 10px 24px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+                    Events Management
+                </button>
+            </div>
+            <div class="service-item">
+                <div class="icon-wrapper">
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <button class="text-wrapper"
+                    style="color: rgb(12, 12, 12); background: #f4f8fd; border: none;  border-radius: 8px; padding: 10px 24px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+                    Graphic Arts & Decoration
+                </button>
+            </div>
+            <div class="service-item">
+                <div class="icon-wrapper">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <button class="text-wrapper"
+                    style="color: rgb(12, 12, 12); background: #f4f8fd; border: none;  border-radius: 8px; padding: 10px 24px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+                    Equipments Hire (Lighting, Stage, Tents)
+                </button>
+            </div>
+            <div class="service-item">
+                <div class="icon-wrapper">
+                    <i class="fas fa-broadcast-tower"></i>
+                </div>
+                <button class="text-wrapper"
+                    style="color: rgb(12, 12, 12); background: #f4f8fd; border: none;  border-radius: 8px; padding: 10px 24px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+                    Radio Broadcasting
+                </button>
+            </div>
+            <div class="service-item">
+                <div class="icon-wrapper">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <button class="text-wrapper"
+                    style="color: rgb(12, 12, 12); background: #f4f8fd; border: none;  border-radius: 8px; padding: 10px 24px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+                    Social Media Management
+                </button>
+            </div>
+            <div class="service-item">
+                <div class="icon-wrapper">
+                    <i class="fas fa-route"></i>
+                </div>
+                <button class="text-wrapper"
+                    style="color: rgb(12, 12, 12); background: #f4f8fd; border: none; border-radius: 8px; padding: 10px 24px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: background 0.2s;">
+                    live streaming
+                </button>
+
+
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <!-- Service End -->
+
+    <!-- Features Start -->
+    <div class="container-fluid feature mt-6 mb-6 wow fadeIn position-relative overflow-hidden" data-wow-delay="0.1s"
+        style="z-index:1;">
+        <!-- Video Background -->
+        <video autoplay muted loop playsinline class="position-absolute top-0 start-0 w-100 h-100"
+            style="object-fit:cover; z-index:0; width: auto;">
+            <source src="{% static 'video/top1.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <!-- Overlay for better readability -->
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background:rgba(0,0,0,0.6); z-index:1;">
+        </div>
+        <div class="container position-relative" style="z-index:2;">
+            <div class="row g-0 justify-content-end">
+                <div class="col-lg-6 pt-5">
+                    <div class="mt-5">
+                        <h1 class="display-6 text-white text-uppercase mb-4 wow fadeIn" data-wow-delay="0.3s">
+                            Why You
+                            should Choose Best Profession in Multimedia & Events</h1>
+                        <p class="text-light mb-4 wow fadeIn" data-wow-delay="0.4s">“TOP 5 SAI's approach to
+                            its tasks
+                            is straightforward. We create, we innovate, we enhance, and we promote. We use
+                            our skills to
+                            keep our client's business trustworthy and give their products or services a
+                            quality top of
+                            mind awareness"..</p>
+                        <div class="row g-4 pt-2 mb-4">
+                            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.4s">
+                                <div class="flex-column text-center border border-5 border-primary p-5">
+                                    <h1 class="text-white" data-toggle="counter-up">46,420</h1>
+                                    <p class="text-white text-uppercase mb-0">Satisfied Clients</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.5s">
+                                <div class="flex-column text-center border border-5 border-primary p-5">
+                                    <h1 class="text-white" data-toggle="counter-up">87,409</h1>
+                                    <p class="text-white text-uppercase mb-0">Complete Projects</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border border-5 border-primary border-bottom-0 p-5">
+                            <div class="experience mb-4 wow fadeIn" data-wow-delay="0.6s">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-white text-uppercase">Experience</span>
+                                    <span class="text-white">90%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="90"
+                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="experience wow fadeIn" data-wow-delay="0.7s">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-white text-uppercase">Work Done</span>
+                                    <span class="text-white">95%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="95"
+                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Features End -->
+
+    <!-- Newsletter Start -->
+    <!-- Features Start -->
+    <div class="container-fluid pt-6 pb-6">
+        <div class="container pt-4">
+            <div class="row g-0 feature-row wow fadeIn" data-wow-delay="0.1s">
+                <!-- Top Row: 3 Features -->
+                <div class="row g-4 feature-row wow fadeIn" data-wow-delay="0.1s">
+                    <div class="col-md-4 col-lg-4 wow fadeIn" data-wow-delay="0.3s">
+                        <div class="feature-item border h-100" style="background-color: #b4d8e7;">
+                            <div class="feature-icon btn-xxl-square bg-primary mb-4 mt-n4 rounded-circle">
+                                <span class="d-inline-block bg-primary text-white fw-bold rounded-circle text-center"
+                                    style="width:48px; height:48px; line-height:48px; font-size:2rem; font-family:'Poppins', Arial, sans-serif;">
+                                    T
+                                </span>
+                            </div>
+                            <div class="p-5 pt-0">
+                                <h5 class="text-uppercase mb-3">Teamwork</h5>
+                                <p>We feel, act and believe as one big team.</p>
+                                <!-- <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
+                                    href="#"><b class="bg-white pe-3">Read More</b> <i
+                                        class="bi bi-arrow-right bg-white ps-3"></i></a> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4 wow fadeIn" data-wow-delay="0.4s">
+                        <div class="feature-item border h-100" style="background-color: #b4d8e7;">
+                            <div class="feature-icon btn-xxl-square bg-primary mb-4 mt-n4 rounded-circle">
+                                <span class="d-inline-block bg-primary text-white fw-bold rounded-circle text-center"
+                                    style="width:48px; height:48px; line-height:48px; font-size:2rem; font-family:'Poppins', Arial, sans-serif;">
+                                    O
+                                </span>
+                            </div>
+                            <div class="p-5 pt-0">
+                                <h5 class="text-uppercase">OWNERSHIP</h5>
+                                <p>Personal accountability is a must.</p>
+                                <!-- <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
+                                    href="#"><b class="bg-white pe-3">Read More</b> <i
+                                        class="bi bi-arrow-right bg-white ps-3"></i></a> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4 wow fadeIn" data-wow-delay="0.5s">
+                        <div class="feature-item border h-100" style="background-color: #b4d8e7;">
+                            <div class="feature-icon btn-xxl-square bg-primary mb-4 mt-n4 rounded-circle">
+                                <span class="d-inline-block bg-primary text-white fw-bold rounded-circle text-center"
+                                    style="width:48px; height:48px; line-height:48px; font-size:2rem; font-family:'Poppins', Arial, sans-serif;">
+                                    P
+                                </span>
+                            </div>
+                            <div class="p-5 pt-0">
+                                <h5 class="text-uppercase">Passion</h5>
+                                <p>Let our passion guide to your success.</p>
+                                <!-- <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
+                                    href="#"><b class="bg-white pe-3">Read More</b> <i
+                                        class="bi bi-arrow-right bg-white ps-3"></i></a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Bottom Row: 1 Feature Centered -->
+                <div class="row g-4 feature-row wow fadeIn mt-4" data-wow-delay="0.1s">
+                    <div class="col-md-4 col-lg-4 wow fadeIn" data-wow-delay="0.6s">
+                        <div class="feature-item border h-100" style="background-color: #b4d8e7;">
+                            <div class="feature-icon btn-xxl-square bg-primary mb-4 mt-n4 rounded-circle">
+                                <span class="d-inline-block bg-primary text-white fw-bold rounded-circle text-center"
+                                    style="width:48px; height:48px; line-height:48px; font-size:2rem; font-family:'Poppins', Arial, sans-serif;">
+                                    S
+                                </span>
+                            </div>
+                            <div class="p-5 pt-0">
+                                <h5 class="text-uppercase">Service</h5>
+                                <p>Committed to serve our clients..</p>
+                                <!-- <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
+                                    href="#"><b class="bg-white pe-3">Read More</b> <i
+                                        class="bi bi-arrow-right bg-white ps-3"></i></a> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4 wow fadeIn" data-wow-delay="0.6s">
+                        <div class="feature-item border h-100" style="background-color: #b4d8e7;">
+                            <div class="feature-icon btn-xxl-square bg-primary mb-4 mt-n4 rounded-circle">
+                                <span class="d-inline-block bg-primary text-white fw-bold rounded-circle text-center"
+                                    style="width:48px; height:48px; line-height:48px; font-size:2rem; font-family:'Poppins', Arial, sans-serif;">
+                                    A
+                                </span>
+                            </div>
+                            <div class="p-5 pt-0">
+                                <h5 class="text-uppercase">Ambition</h5>
+                                <p>Our drive pushes us to aim high.</p>
+                                <!-- <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
+                                    href="#"><b class="bg-white pe-3">Read More</b> <i
+                                        class="bi bi-arrow-right bg-white ps-3"></i></a> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4 wow fadeIn" data-wow-delay="0.6s">
+                        <div class="feature-item border h-100" style="background-color: #b4d8e7;">
+                            <div class="feature-icon btn-xxl-square bg-primary mb-4 mt-n4 rounded-circle">
+                                <span class="d-inline-block bg-primary text-white fw-bold rounded-circle text-center"
+                                    style="width:48px; height:48px; line-height:48px; font-size:2rem; font-family:'Poppins', Arial, sans-serif;">
+                                    I
+                                </span>
+                            </div>
+                            <div class="p-5 pt-0">
+                                <h5 class="text-uppercase">Innovation</h5>
+                                <p>We act with creative thoughts.</p>
+                                <!-- <a class="position-relative text-body text-uppercase small d-flex justify-content-between"
+                                    href="#"><b class="bg-white pe-3">Read More</b> <i
+                                        class="bi bi-arrow-right bg-white ps-3"></i></a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Features End -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var carousel = document.getElementById('header-carousel');
+        var videos = [
+            document.getElementById('carousel-video-1'),
+            document.getElementById('carousel-video-2'),
+            document.getElementById('carousel-video-3')
+        ];
+        videos[0].play();
+        videos[1].pause();
+        videos[2].pause();
+        carousel.addEventListener('slide.bs.carousel', function(e) {
+            videos.forEach(function(video, idx) {
+                if (idx === e.to) {
+                    video.currentTime = 0;
+                    video.play();
+                } else {
+                    video.pause();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'tickets/base.html' %}
+{% block content %}
+<div class="reserve-shell">
+  <div class="reserve-card">
+    <div class="reserve-card__hero">
+      <div>
+        <p class="reserve-eyebrow">Secure checkout</p>
+        <h2>Complete your payment</h2>
+        <p class="reserve-subtitle">You’re being sent to the {{ provider_label }} transaction page to finish the payment securely.</p>
+      </div>
+      <div class="reserve-badge">MoMo</div>
+    </div>
+
+    <div class="reserve-summary">
+      <div class="reserve-summary__info">
+        <strong>{{ purchase.category.event.title }}</strong>
+        <span>{{ purchase.category.name }} × {{ purchase.quantity }}</span>
+      </div>
+      <div class="reserve-summary__price">{{ purchase.total_price|floatformat:2 }} RWF</div>
+    </div>
+
+    <div class="alert alert-info">
+      Reference: <strong>{{ payment_reference }}</strong>
+    </div>
+
+    <form method="post" class="reserve-form">
+      {% csrf_token %}
+      <div class="reserve-actions">
+        <button type="submit" class="btn btn-pay reserve-submit">Confirm payment</button>
+        <a href="{% url 'tickets:event_detail' slug=purchase.category.event.slug %}" class="btn btn-outline-light reserve-back">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,233 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block title %}Contact - TOP5SAI{% endblock %}
+
+{% block content %}
+<!-- Page Header Start -->
+<div class="container-fluid page-header pt-5 mb-6 wow fadeIn"
+     data-wow-delay="0.1s"
+     style="background: url('{% static 'img/03.jpg' %}') center center/cover no-repeat; min-height: 350px;">
+    <div class="container text-center pt-5" style="width:550px; height:auto">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="bg-white p-5" style="box-shadow:2px 4px 4px 8px skyblue; border-radius: 12px;">
+                    <h1 class="display-6 text-uppercase mb-3 animated slideInDown">Contact</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<!-- Contact Info Cards -->
+<div class="contact-container" style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; margin: 50px 20px;">
+    <div class="contact-card" style="text-align: center; box-shadow:2px 4px 4px 8px skyblue; padding: 30px; border-radius: 12px; flex: 1; min-width: 200px; max-width: 280px;">
+        <div class="icon-circle" style="font-size: 2.5rem; color: #0d6efd; margin-bottom: 15px;">
+            <i class="fas fa-phone-alt"></i>
+        </div>
+        <h3 class="card-title" style="font-weight: 600; margin-bottom: 10px;">CALL US</h3>
+        <p class="card-info">+250 788 566 175</p>
+    </div>
+
+    <div class="contact-card" style="text-align: center; box-shadow:2px 4px 4px 8px skyblue; padding: 30px; border-radius: 12px; flex: 1; min-width: 200px; max-width: 280px;">
+        <div class="icon-circle" style="font-size: 2.5rem; color: #0d6efd; margin-bottom: 15px;">
+            <i class="fas fa-envelope"></i>
+        </div>
+        <h3 class="card-title" style="font-weight: 600; margin-bottom: 10px;">EMAIL US</h3>
+        <p class="card-info">info@top5sai.com</p>
+    </div>
+
+    <div class="contact-card" style="text-align: center; box-shadow:2px 4px 4px 8px skyblue; padding: 30px; border-radius: 12px; flex: 1; min-width: 200px; max-width: 280px;">
+        <div class="icon-circle" style="font-size: 2.5rem; color: #0d6efd; margin-bottom: 15px;">
+            <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <h3 class="card-title" style="font-weight: 600; margin-bottom: 10px;">LOCATIONS</h3>
+        <p class="card-info">23 KN 272 St, Kigali, RWANDA</p>
+    </div>
+</div>
+
+<!-- Contact Start -->
+<div class="container-fluid appoinment mt-6 mb-6 py-5 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container pt-5">
+        <div class="row gy-5 gx-0">
+            <div class="col-lg-6 pe-lg-5 wow fadeIn" data-wow-delay="0.3s">
+                <h1 class="display-6 text-uppercase text-white mb-4">Join Our Community</h1>
+                <p class="text-white mb-5 wow fadeIn" data-wow-delay="0.4s">Join our community and become part of the experience. Connect with others who share your passion for fun and adventure. Gain access to exclusive events, offers, and updates.</p>
+                <div class="d-flex align-items-start wow fadeIn" data-wow-delay="0.5s">
+                    <div class="btn-lg-square bg-white">
+                        <i class="bi bi-geo-alt text-dark fs-3"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h6 class="text-white text-uppercase">Office Address</h6>
+                        <span class="text-white">23 KN 272 St, Kigali, RWANDA</span>
+                    </div>
+                </div>
+                <hr class="bg-body">
+                <div class="d-flex align-items-start wow fadeIn" data-wow-delay="0.6s">
+                    <div class="btn-lg-square bg-white">
+                        <i class="bi bi-clock text-dark fs-3"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h6 class="text-white text-uppercase">Office Time</h6>
+                        <span class="text-white">Mon-Sat 09am-5pm, Sun Closed</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-n5 wow fadeIn" data-wow-delay="0.7s">
+                <div class="bg-white p-5">
+                    <h2 class="text-uppercase mb-4">Online Appointment</h2>
+                    <div id="formMessage" style="display:none; margin-bottom:15px; padding:12px; border-radius:5px;"></div>
+                    <form id="contactForm" method="POST" action="{% url 'submit_message' %}">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-0 bg-light" id="name" name="name"
+                                        placeholder="Your Name" required>
+                                    <label for="name">Your Name</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control border-0 bg-light" id="mail" name="mail"
+                                        placeholder="Your Email" required>
+                                    <label for="mail">Your Email</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-0 bg-light" id="mobile" name="mobile"
+                                        placeholder="Your Mobile" required>
+                                    <label for="mobile">Your Mobile</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-floating">
+                                    <select class="form-select border-0 bg-light" id="service" name="service" required>
+                                        <option selected value="Live Wedding">Live Wedding</option>
+                                        <option value="Live Streaming">Live Streaming</option>
+                                        <option value="Event Planning">Event Planning</option>
+                                        <option value="Photography">Photography</option>
+                                        <option value="Videography">Videography</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <label for="service">Choose A Service</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control border-0 bg-light" placeholder="Leave a message here"
+                                        id="message" name="message" style="height: 130px" required></textarea>
+                                    <label for="message">Message</label>
+                                </div>
+                            </div>
+                            <div class="col-12 text-center">
+                                <button class="btn btn-primary w-100 py-3" type="submit" id="submitBtn">Submit Now</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Contact End -->
+
+<!-- Map Section Start -->
+<div class="container-fluid py-6 wow fadeInUp" data-wow-delay="0.5s" style="background: #f9f9f9;">
+    <div class="container">
+        <div class="text-center mb-5 wow fadeIn" data-wow-delay="0.1s">
+            <h2 class="display-6 text-uppercase mb-3">Find Us On The Map</h2>
+            <p class="lead" style="color: #666;">Visit our office location in Kigali, Rwanda. We're located at 23 KN 272 St, easily accessible and ready to serve you.</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Google Map Embed -->
+                <div class="map-container wow fadeInUp" data-wow-delay="0.3s" style="border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(13, 110, 253, 0.15); height: 500px;">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.789137446301!2d30.0487921!3d-1.979155!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca50fba3d80b5%3A0x3d9ce259112fff05!2sTOP%205%20SAI%20(5%20STARS%20EVENTS)!5e0!3m2!1sen!2srw!4v1718000000000" 
+                        width="100%" 
+                        height="100%" 
+                        style="border: none;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+
+
+                <!-- View on Google Maps Link -->
+                <div class="text-center mt-4 wow fadeInUp" data-wow-delay="0.7s">
+                    <a href="https://www.google.com/maps/place/TOP+5+SAI+(+5+STARS+EVENTS)/@-1.979155,30.0487921,15z/data=!4m6!3m5!1s0x19dca50fba3d80b5:0x3d9ce259112fff05!8m2!3d-1.979155!4d30.0487921!16s%2Fg%2F11m6f002_g" 
+                        target="_blank" 
+                        class="btn btn-primary btn-lg px-5"
+                        style="background: linear-gradient(90deg, #09b4ed 0%, #0d6efd 100%); border: none;">
+                        <i class="fas fa-external-link-alt me-2"></i>View Full Map on Google
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Map Section End -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = document.getElementById('submitBtn');
+            const formMessage = document.getElementById('formMessage');
+            const originalText = submitBtn.innerText;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Sending...';
+            
+            fetch('{% url 'submit_message' %}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                formMessage.style.display = 'block';
+                
+                if (data.status === 'success') {
+                    formMessage.style.backgroundColor = '#d4edda';
+                    formMessage.style.borderColor = '#c3e6cb';
+                    formMessage.style.color = '#155724';
+                    formMessage.style.border = '1px solid #c3e6cb';
+                    formMessage.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
+                    contactForm.reset();
+                    setTimeout(() => {
+                        formMessage.style.display = 'none';
+                    }, 5000);
+                } else {
+                    formMessage.style.backgroundColor = '#f8d7da';
+                    formMessage.style.borderColor = '#f5c6cb';
+                    formMessage.style.color = '#721c24';
+                    formMessage.style.border = '1px solid #f5c6cb';
+                    formMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + data.message;
+                }
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                formMessage.style.display = 'block';
+                formMessage.style.backgroundColor = '#f8d7da';
+                formMessage.style.borderColor = '#f5c6cb';
+                formMessage.style.color = '#721c24';
+                formMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> An error occurred';
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+            });
+        });
+    }
+</script>
+{% endblock %}

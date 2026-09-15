@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TOP5SAI Tickets</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/tickets/css/tickets.css" rel="stylesheet">
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <header class="tickets-navbar-wrap">
+      <nav class="navbar navbar-expand-lg tickets-navbar">
+        <div class="container">
+          <a class="navbar-brand" href="/">TOP5SAI</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ticketsNavbar" aria-controls="ticketsNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="ticketsNavbar">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+              <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'tickets:first_event' %}">Events</a></li>
+              {% if show_buy_tickets_link %}
+              <li class="nav-item"><a class="nav-link btn btn-nav-cta" href="/tickets/">Buy Tickets</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main class="container my-5">
+      {% if messages %}
+        {% for m in messages %}
+          <div class="alert alert-{{ m.tags }}">{{ m }}</div>
+        {% endfor %}
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+    
+  <footer class="ticket-page-footer">
+    <div class="container">
+      <div class="footer-content-inner">
+        <div class="footer-column footer-brand-col">
+          <div class="footer-brand-block">
+            <div class="footer-brand-icon">✦</div>
+            <div>
+              <p class="footer-brand">TOP5SAI Tickets</p>
+              <p class="footer-note">Fast, secure booking with instant e‑tickets for unforgettable events and premium experiences.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-column footer-links-col">
+          <a href="#ticket-booking" class="footer-link">🎟️ Book Tickets</a>
+          <a href="{% url 'home' %}" class="footer-link">🏠 Home</a>
+         
+        </div>
+
+        <div class="footer-column footer-contact-col">
+          <a class="contact-item" href="tel:+250788123456">📞 <span>+250 788 123 456</span></a>
+          <a class="contact-item" href="mailto:support@top5sai.com">✉️ <span>support@top5sai.com</span></a>
+         <div class="d-flex pt-3">
+             <a class="btn btn-sm-square btn-light text-primary ms-2"
+                            href="https://www.facebook.com/top5sai.music"><i class="fab fa-facebook-f"></i></a>
+              <a class="btn btn-sm-square btn-light text-primary ms-2" href="https://x.com/top5sai"><i
+                                class="fab fa-twitter"></i></a>
+              <a class="btn btn-sm-square btn-light text-primary ms-2"
+                            href="https://www.linkedin.com/in/top5sai-production-8a310a74/"><i
+                                class="fab fa-linkedin-in"></i></a>
+              <a class="btn btn-sm-square btn-light text-primary ms-2"
+                            href="https://www.instagram.com/top5sai/"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <small>© {% now "Y" %} TOP5SAI TECHNOLOGY. All rights reserved.</small>
+      </div>
+    </div>
+  </footer>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</html>
