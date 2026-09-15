@@ -25,7 +25,14 @@ SECRET_KEY = 'django-insecure--yhmmq7cdebnj)1um1up=egej7rbu@24=cx2a-j&rq(rib#b7o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+
+# Allow hosts
+if DEBUG is False:
+    ALLOWED_HOSTS = ['44.207.175.39', 'top5sai.com', 'www.top5sai.com', 'http://top5sai.com']
+    HOST = "https://top5sai.com"
+else:
+    ALLOWED_HOSTS = ['*']
+    HOST = "http://127.0.0.1:8000/"
 
 
 # Application definition
@@ -163,10 +170,3 @@ MTN_MOMO = {
     'CURRENCY': os.environ.get('MTN_MOMO_CURRENCY', 'EUR'),
 }
 
-# Allow hosts
-if DEBUG is False:
-    ALLOWED_HOSTS = ['44.207.175.39', 'top5sai.com', 'www.top5sai.com', 'http://top5sai.com']
-    HOST = "https://top5sai.com"
-else:
-    ALLOWED_HOSTS = ['*']
-    HOST = "http://127.0.0.1:8000/"
