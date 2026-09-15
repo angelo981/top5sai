@@ -80,7 +80,7 @@ if DEBUG is False:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'top5',
+            'NAME': 'top5sai',
             'USER': 'energy',
             'PORT': '3306',
             'HOST': '127.0.0.1',
@@ -164,4 +164,9 @@ MTN_MOMO = {
 }
 
 # Allow hosts
-ALLOWED_HOSTS = ['*']
+if DEBUG is False:
+    ALLOWED_HOSTS = ['44.207.175.39', 'top5sai.com', 'www.top5sai.com', 'http://top5sai.com']
+    HOST = "https://top5sai.com"
+else:
+    ALLOWED_HOSTS = ['*']
+    HOST = "http://127.0.0.1:8000/"
